@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getPortfolioPayload } from "@/lib/data/get-portfolio";
 import { AppShell } from "@/components/shell/AppShell";
+import { BentoCard } from "@/components/ui/BentoCard";
+import { ExpandableTile } from "@/components/ui/ExpandableTile";
 import { StatusGlyph } from "@/components/ui/StatusGlyph";
 import { formatAsOf, money, pct } from "@/lib/format";
 
@@ -63,60 +65,82 @@ export default async function ProjectsPage({
           <Link
             key={c.href}
             href={c.href}
-            className="inline-flex min-h-11 items-center rounded-full bg-[var(--surface)] px-4 text-[15px] text-[var(--ink-2)]"
+            className="inline-flex min-h-11 items-center rounded-full border border-[var(--tile-border)] bg-[var(--surface)] px-4 text-[14px] text-[var(--ink-2)]"
           >
             {c.label}
           </Link>
         ))}
       </div>
 
-      <p className="px-1 text-[15px] text-[var(--ink-2)]">
-        {rows.length} project{rows.length === 1 ? "" : "s"} · portfolio{" "}
-        {money(payload.metrics.portfolio.activeContractValue)}
-      </p>
+      <BentoCard label="Portfolio">
+        <p className="text-[15px] text-[var(--ink-2)]">
+          {rows.length} project{rows.length === 1 ? "" : "s"} ·{" "}
+          {money(payload.metrics.portfolio.activeContractValue)} contract value.
+          Tap a tile to expand.
+        </p>
+      </BentoCard>
 
-      <div className="overflow-hidden rounded-[14px] bg-[var(--surface)]">
-        {rows.map((row, idx) => (
-          <Link
+      <div className="space-y-2">
+        {rows.map((row) => (
+          <ExpandableTile
             key={row.project.ProjectID}
-            href={`/projects/${row.project.ProjectID}`}
-            className={`flex min-h-14 items-center gap-3 px-4 py-3 ${
-              idx === rows.length - 1 ? "" : "border-b border-[var(--hairline)]"
-            }`}
-          >
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-[17px] font-semibold leading-[22px]">
-                {row.project.ProjectName}
+            summary={
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-[15px] font-semibold leading-5">
+                    {row.project.ProjectName}
+                  </div>
+                  <div className="truncate text-[12px] text-[var(--ink-2)]">
+                    {row.client} · {row.project.Portfolio}
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <StatusGlyph rag={row.metrics.OverallRAG} />
+                  <span
+                    className="text-[13px] font-semibold"
+                    style={{
+                      color:
+                        row.metrics.ForecastMarginPct < 0
+                          ? "var(--off-track-text)"
+                          : "var(--ink)",
+                    }}
+                  >
+                    {pct(row.metrics.ForecastMarginPct)}
+                  </span>
+                </div>
               </div>
-              <div className="truncate text-[15px] text-[var(--ink-2)]">
-                {row.client} · {row.project.Portfolio}
+            }
+            detail={
+              <div className="space-y-2">
+                <p>
+                  Health {row.metrics.HealthScore ?? "—"} · slip{" "}
+                  {row.metrics.ScheduleSlipDays}d · contract{" "}
+                  {money(row.metrics.CurrentContractValue)}
+                </p>
+                <p>
+                  Cost {row.metrics.CostRAG} · Schedule{" "}
+                  {row.metrics.ScheduleRAG} · Margin {row.metrics.MarginRAG}
+                </p>
+                <Link
+                  href={`/projects/${row.project.ProjectID}`}
+                  className="inline-flex font-semibold text-[var(--accent)]"
+                >
+                  Open project →
+                </Link>
               </div>
-            </div>
-            <StatusGlyph rag={row.metrics.OverallRAG} />
-            <div className="w-12 text-right text-[15px] font-medium">
-              {row.metrics.HealthScore ?? "—"}
-            </div>
-            <div
-              className="w-[4.5rem] text-right text-[15px] font-medium"
-              style={{
-                color:
-                  row.metrics.ForecastMarginPct < 0
-                    ? "var(--off-track-text)"
-                    : "var(--ink)",
-              }}
-            >
-              {pct(row.metrics.ForecastMarginPct)}
-            </div>
-          </Link>
+            }
+          />
         ))}
         {rows.length === 0 ? (
-          <p className="px-4 py-6 text-[15px] text-[var(--ink-2)]">
-            No projects match these filters.{" "}
-            <Link href="/projects" className="text-[var(--accent)]">
-              Clear filters
-            </Link>
-            .
-          </p>
+          <BentoCard label="Empty">
+            <p className="text-[15px] text-[var(--ink-2)]">
+              No projects match these filters.{" "}
+              <Link href="/projects" className="font-semibold text-[var(--accent)]">
+                Clear filters
+              </Link>
+              .
+            </p>
+          </BentoCard>
         ) : null}
       </div>
     </AppShell>

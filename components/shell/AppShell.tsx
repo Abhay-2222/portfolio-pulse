@@ -1,14 +1,14 @@
 import Link from "next/link";
 
-export type TabId = "pulse" | "projects" | "people" | "money" | "risks";
+const TABS = [
+  { href: "/", label: "Pulse", id: "pulse" },
+  { href: "/projects", label: "Projects", id: "projects" },
+  { href: "/people", label: "People", id: "people" },
+  { href: "/money", label: "Money", id: "money" },
+  { href: "/risks", label: "Risks", id: "risks" },
+] as const;
 
-const TABS: { id: TabId; href: string; label: string }[] = [
-  { id: "pulse", href: "/", label: "Pulse" },
-  { id: "projects", href: "/projects", label: "Projects" },
-  { id: "people", href: "/people", label: "People" },
-  { id: "money", href: "/money", label: "Money" },
-  { id: "risks", href: "/risks", label: "Risks" },
-];
+export type TabId = (typeof TABS)[number]["id"];
 
 export function AppShell({
   active,
@@ -24,9 +24,9 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen pb-24">
-      <header className="sticky top-0 z-20 border-b border-[var(--hairline)] bg-[var(--material)] [backdrop-filter:var(--material-blur)]">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 md:px-6">
+    <div className="min-h-screen bg-[var(--canvas)] pb-24 text-[var(--ink)]">
+      <header className="sticky top-0 z-20 border-b border-[var(--hairline)] bg-[var(--material)] backdrop-blur-[18px]">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             {backHref ? (
               <Link
@@ -36,29 +36,28 @@ export function AppShell({
                 ← Back
               </Link>
             ) : (
-              <p className="text-[13px] text-[var(--ink-3)]">Portfolio Pulse</p>
+              <p className="font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] opacity-70">
+                Portfolio Pulse
+              </p>
             )}
-            <h1 className="truncate text-[22px] font-bold leading-7 tracking-tight md:text-[28px] md:leading-[34px]">
+            <h1 className="truncate text-[24px] font-semibold leading-7 tracking-[-0.02em]">
               {title}
             </h1>
           </div>
           {asOf ? (
-            <div className="shrink-0 text-right text-[13px] text-[var(--ink-2)]">
+            <div className="shrink-0 text-right text-[12px] text-[var(--ink-2)]">
               <div>As of {asOf}</div>
-              <Link className="text-[var(--accent)]" href="/api/portfolio">
-                JSON API
-              </Link>
             </div>
           ) : null}
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl space-y-8 px-4 py-6 md:px-6 md:py-10">
+      <main className="mx-auto max-w-3xl space-y-3 px-3 py-4 md:space-y-4 md:px-4 md:py-6">
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--hairline)] bg-[var(--material)] [backdrop-filter:var(--material-blur)]">
-        <div className="mx-auto grid max-w-5xl grid-cols-5 px-2 py-2 text-center text-[11px]">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--hairline)] bg-[var(--material)] backdrop-blur-[18px]">
+        <div className="mx-auto grid max-w-3xl grid-cols-5 gap-1 px-2 py-2 text-center text-[11px]">
           {TABS.map((tab) => {
             const isActive = tab.id === active;
             return (
@@ -81,3 +80,4 @@ export function AppShell({
     </div>
   );
 }
+
