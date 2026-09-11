@@ -101,7 +101,7 @@ export function Spectrum({ projects }: { projects: SpectrumProject[] }) {
           Health score
         </text>
         {dots.map((p) => (
-          <g key={p.id}>
+          <a key={p.id} href={`/projects/${p.id}`} aria-label={p.name}>
             <title>
               {p.name}: health {Math.round(p.health)}, {p.rag}
             </title>
@@ -114,7 +114,7 @@ export function Spectrum({ projects }: { projects: SpectrumProject[] }) {
               stroke="var(--surface)"
               strokeWidth={1.5}
             />
-          </g>
+          </a>
         ))}
       </svg>
     </div>
