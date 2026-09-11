@@ -89,8 +89,9 @@ export function computePortfolioKPIs(
   const underUtilized = resources.filter(
     (r) => r.UtilizationStatus === "Under-utilized",
   ).length;
+  // Summary "Bench capacity" = Σ AvailableHrsPerWeek where AvailableHrsPerWeek > 0
   const benchCapacityHrs = resources
-    .filter((r) => r.UtilizationStatus === "Under-utilized")
+    .filter((r) => r.AvailableHrsPerWeek > 0)
     .reduce((s, r) => s + r.AvailableHrsPerWeek, 0);
 
   const invoiceMetrics = dataset.invoices.map((i) =>
@@ -112,9 +113,10 @@ export function computePortfolioKPIs(
   const unbilledWipActive = activeMetrics.reduce((s, m) => s + m.UnbilledWIP, 0);
 
   const openRaid = dataset.raid.filter((r) => r.Status !== "Closed");
+  // Summary counts Critical severity across all RAID types (not Risk-only)
   const openCriticalRisks = openRaid.filter((r) => {
     const m = computeRaidMetrics(r, dataset);
-    return r.Type === "Risk" && m.Severity === "Critical";
+    return m.Severity === "Critical";
   }).length;
   const weightedOpenRiskExposure = openRaid.reduce(
     (s, r) => s + computeRaidMetrics(r, dataset).ExpectedExposure,

@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "generate:data": "tsx scripts/generate-workbook.ts"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "date-fns": "^4.4.0",

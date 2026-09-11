@@ -138,6 +138,8 @@ function sheetToRows(
   wb: XLSX.WorkBook,
   name: string,
   issues: DataIssue[],
+  /** When set, only these columns are kept (extra calculated columns ignored). */
+  pickColumns?: readonly string[],
 ): { headers: string[]; rows: Record<string, unknown>[] } | null {
   const sheet = wb.Sheets[name];
   if (!sheet) {
@@ -167,6 +169,7 @@ function sheetToRows(
     return null;
   }
   const headers = (matrix[0] ?? []).map((h) => String(h ?? ""));
+  const keep = pickColumns ? new Set(pickColumns) : null;
   const rows: Record<string, unknown>[] = [];
   for (let i = 1; i < matrix.length; i++) {
     const line = matrix[i];
@@ -174,6 +177,7 @@ function sheetToRows(
     const obj: Record<string, unknown> = {};
     headers.forEach((h, idx) => {
       if (!h) return;
+      if (keep && !keep.has(h)) return;
       obj[h] = line[idx] ?? null;
     });
     rows.push(blankToNull(obj));
@@ -181,26 +185,27 @@ function sheetToRows(
   return { headers, rows };
 }
 
+/** Fallback defaults aligned with the real Enterprise_Portfolio_Data Settings sheet. */
 function defaultSettings(): SettingsMap {
   return {
     AsOfDate: new Date(Date.UTC(2026, 8, 11)),
-    ActualsCutoff: new Date(Date.UTC(2026, 8, 11)),
+    ActualsCutoff: new Date(Date.UTC(2026, 7, 31)),
     RAG_CostAmber: 0.1,
     RAG_CostRed: 0.2,
     RAG_ScheduleAmberDays: 14,
-    RAG_ScheduleRedDays: 30,
-    MarginFloor: 0.1,
+    RAG_ScheduleRedDays: 45,
+    MarginFloor: 0.15,
     MarginTolerance: 0.05,
     OverallocationThreshold: 1.0,
-    UnderutilizationThreshold: 0.5,
-    RiskCriticalScore: 20,
-    RiskHighScore: 12,
-    RiskMediumScore: 6,
+    UnderutilizationThreshold: 0.6,
+    RiskCriticalScore: 15,
+    RiskHighScore: 10,
+    RiskMediumScore: 5,
     MilestoneAtRiskDays: 14,
     BudgetNearLimit: 0.9,
-    Contingency_High: 0.15,
+    Contingency_High: 0.05,
     Contingency_Medium: 0.1,
-    Contingency_Low: 0.05,
+    Contingency_Low: 0.15,
     Currency: "CAD",
     AutoRefreshMinutes: 10,
   };
@@ -251,9 +256,9 @@ export function parseWorkbook(
   };
 
   for (const table of INPUT_TABLES) {
-    const parsed = sheetToRows(wb, table, issues);
-    if (!parsed) continue;
     const expected = TABLE_HEADERS[table];
+    const parsed = sheetToRows(wb, table, issues, expected);
+    if (!parsed) continue;
     if (!validateHeaders(table, parsed.headers, expected, issues)) continue;
     const schema = ROW_SCHEMAS[table];
     const out: Dataset[DatasetTableKey] = [];
@@ -275,7 +280,12 @@ export function parseWorkbook(
     dataset[keyMap[table]] = out as never;
   }
 
-  const settingsParsed = sheetToRows(wb, "Settings", issues);
+  const settingsParsed = sheetToRows(
+    wb,
+    "Settings",
+    issues,
+    TABLE_HEADERS.Settings,
+  );
   if (settingsParsed) {
     if (
       validateHeaders(

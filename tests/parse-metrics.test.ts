@@ -3,6 +3,7 @@ import path from "path";
 import * as XLSX from "xlsx";
 import { describe, expect, it } from "vitest";
 import { parseWorkbook } from "@/lib/data/parse";
+import type { PortfolioKPIs } from "@/lib/metrics";
 import {
   computeAllProjectMetrics,
   computePortfolioKPIs,
@@ -14,13 +15,62 @@ const DATA_PATH = path.join(
   "Enterprise_Portfolio_Data.xlsx",
 );
 
-function loadSummary(): Map<string, number> {
+/** Map Summary sheet labels → PortfolioKPIs field names. */
+const SUMMARY_LABEL_TO_KPI: Record<string, keyof PortfolioKPIs> = {
+  "Active projects": "activeProjects",
+  "Active contract value": "activeContractValue",
+  "Active budget (BAC)": "activeBudget",
+  "Actual cost to date (active)": "actualCostActive",
+  "Estimate at completion (active)": "eacActive",
+  "Forecast margin % (active)": "forecastMarginPct",
+  "Target margin % (weighted)": "weightedTargetMargin",
+  "Red projects": "offTrack",
+  "Amber projects": "watch",
+  "Green projects": "onTrack",
+  "Average health score": "averageHealthScore",
+  "Average schedule slip (days)": "averageScheduleSlip",
+  "Overallocated people": "overallocated",
+  "Under-utilized people": "underUtilized",
+  "Bench capacity (hrs/week)": "benchCapacityHrs",
+  "Outstanding receivables": "outstandingReceivables",
+  "Overdue receivables": "overdueReceivables",
+  "Unbilled WIP (active)": "unbilledWipActive",
+  "Open critical risks": "openCriticalRisks",
+  "Open risk exposure (weighted)": "weightedOpenRiskExposure",
+  "Pending change requests": "pendingChangeRequests",
+  "Pending CR cost impact": "pendingChangeRequestCost",
+  "Overdue milestones": "overdueMilestones",
+};
+
+/**
+ * Parse Summary with header:1, find the KPI header row, then read until blank /
+ * next section.
+ */
+function loadSummaryOracle(): Map<keyof PortfolioKPIs, number> {
   const buf = readFileSync(DATA_PATH);
   const wb = XLSX.read(buf, { type: "buffer", cellDates: true });
-  const rows = XLSX.utils.sheet_to_json<{ KPI: string; Value: number }>(
+  const matrix = XLSX.utils.sheet_to_json<(string | number | null)[]>(
     wb.Sheets.Summary,
+    { header: 1, defval: null },
   );
-  return new Map(rows.map((r) => [r.KPI, Number(r.Value)]));
+  const kpiHeaderIdx = matrix.findIndex(
+    (row) => row?.[0] === "KPI" && row?.[1] === "Value",
+  );
+  if (kpiHeaderIdx < 0) {
+    throw new Error("Summary sheet missing KPI/Value header row");
+  }
+  const out = new Map<keyof PortfolioKPIs, number>();
+  for (let i = kpiHeaderIdx + 1; i < matrix.length; i++) {
+    const row = matrix[i];
+    const label = row?.[0];
+    const value = row?.[1];
+    if (label == null || label === "" || typeof label !== "string") break;
+    // Section headers have a blank Value cell
+    if (value == null || value === "") break;
+    const key = SUMMARY_LABEL_TO_KPI[label];
+    if (key) out.set(key, Number(value));
+  }
+  return out;
 }
 
 describe("workbook parse + metrics oracle", () => {
@@ -30,16 +80,19 @@ describe("workbook parse + metrics oracle", () => {
   const projects = computeAllProjectMetrics(dataset, asOf);
   const kpis = computePortfolioKPIs(dataset, asOf, projects);
   const byId = new Map(projects.map((p) => [p.ProjectID, p]));
-  const summary = loadSummary();
+  const summary = loadSummaryOracle();
 
   it("parses 24 projects with no issues", () => {
     expect(dataset.projects).toHaveLength(24);
     expect(issues).toHaveLength(0);
     expect(asOf.toISOString().startsWith("2026-09-11")).toBe(true);
+    expect(dataset.settings.RAG_ScheduleRedDays).toBe(45);
+    expect(dataset.settings.MarginFloor).toBe(0.15);
+    expect(dataset.settings.RiskCriticalScore).toBe(15);
   });
 
   it("matches Summary sheet KPI oracle", () => {
-    const entries = Object.entries(kpis) as [string, number][];
+    const entries = Object.entries(kpis) as [keyof PortfolioKPIs, number][];
     for (const [key, actual] of entries) {
       const expected = summary.get(key);
       expect(expected, `Summary missing ${key}`).toBeDefined();
