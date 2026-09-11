@@ -30,8 +30,14 @@ export default async function ProjectDetailPage({
     (r) => r.EmployeeID === project.ProjectManagerID,
   );
 
+  const asOf = new Date(payload.asOfDate);
   const team = payload.dataset.allocations
-    .filter((a) => a.ProjectID === id)
+    .filter(
+      (a) =>
+        a.ProjectID === id &&
+        a.StartDate.getTime() <= asOf.getTime() &&
+        asOf.getTime() <= a.EndDate.getTime(),
+    )
     .map((a) => {
       const person = payload.dataset.resources.find(
         (r) => r.EmployeeID === a.EmployeeID,
