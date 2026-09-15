@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
     "/": ["./data/**/*"],
     "/api/portfolio": ["./data/**/*"],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "25mb",
+    },
+  },
 };
 
 export default nextConfig;

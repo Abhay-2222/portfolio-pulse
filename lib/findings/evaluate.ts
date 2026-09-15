@@ -222,6 +222,7 @@ export function evaluateFindings(
   });
 
   for (const m of active) {
+    if (!m.marginReady) continue;
     if (m.UnbilledWIP >= 0) continue;
     const project = projectRef(m.ProjectID);
     out.push(
@@ -301,6 +302,7 @@ export function evaluateFindings(
   }
 
   for (const m of active) {
+    if (!m.marginReady) continue;
     const project = projects.get(m.ProjectID);
     if (!project || m.ForecastMarginPct >= floor) continue;
     const ref = projectRef(m.ProjectID);
@@ -455,7 +457,7 @@ export function evaluateFindings(
         ),
       );
     }
-    if (metrics) {
+    if (metrics && metrics.marginReady) {
       const after = crAfterPosition(metrics, cr);
       if (after.marginPct < floor && metrics.ForecastMarginPct >= floor) {
         out.push(

@@ -13,6 +13,7 @@ import type {
   SheetIndex,
   SourceIndex,
 } from "@/lib/data/types";
+import { hydrateProject } from "@/lib/data/lenient-project";
 
 const ENTITY_KEY: Record<Exclude<TableName, "Settings">, string> = {
   Projects: "ProjectID",
@@ -154,7 +155,7 @@ function parseSettings(
         column: k,
         message: `Invalid number for ${k}`,
       });
-      settings[k] = 0;
+      settings[k] = k === "AutoRefreshMinutes" ? 5 : 0;
     } else {
       settings[k] = n;
     }
@@ -246,15 +247,21 @@ function defaultSettings(): SettingsMap {
     Contingency_Medium: 0.1,
     Contingency_Low: 0.15,
     Currency: "CAD",
-    AutoRefreshMinutes: 10,
+    AutoRefreshMinutes: 5,
   };
 }
+
+export type ParseOptions = {
+  fileId?: string;
+  fileModified?: string;
+  lenientProjects?: boolean;
+};
 
 export function parseWorkbook(
   buffer: ArrayBuffer | Buffer,
   version: string,
   fetchedAt: Date = new Date(),
-  meta?: { fileId?: string; fileModified?: string },
+  meta?: ParseOptions,
 ): ParseResult {
   const issues: DataIssue[] = [];
   const wb = XLSX.read(buffer, {
@@ -310,6 +317,21 @@ export function parseWorkbook(
     const index: SheetIndex = { columns: parsed.columns, rows: {} };
     const out: Dataset[DatasetTableKey] = [];
     parsed.rows.forEach((row) => {
+      if (table === "Projects" && meta?.lenientProjects) {
+        const project = hydrateProject(row.values);
+        if (project) {
+          out.push(project as never);
+          index.rows[project.ProjectID] = row.excelRow;
+        } else {
+          issues.push({
+            table,
+            rowNumber: row.excelRow,
+            column: "ProjectName",
+            message: "Project needs a name",
+          });
+        }
+        return;
+      }
       const result = schema.safeParse(row.values);
       if (result.success) {
         (out as unknown[]).push(result.data);

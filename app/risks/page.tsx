@@ -2,6 +2,7 @@ import { getPortfolioPayload } from "@/lib/data/get-portfolio";
 import { AppShell } from "@/components/shell/AppShell";
 import { computeRaidMetrics } from "@/lib/metrics/risk";
 import { FilterChips } from "@/components/ui/FilterChips";
+import { NotInBook } from "@/components/book/NotInBook";
 import { formatAsOf, money } from "@/lib/format";
 import { StatGrid } from "@/components/ui/StatGrid";
 import { CardStack, EntityCard, ragTone, SectionLabel } from "@/components/ui/ListCard";
@@ -108,7 +109,9 @@ export default async function RisksPage({
       <section className="space-y-2">
         <SectionLabel kicker="Open RAID" />
         <CardStack>
-          {raid.length === 0 ? (
+          {payload.dataset.raid.length === 0 ? (
+            <NotInBook view="Risks" />
+          ) : raid.length === 0 ? (
             <p className="card-tile text-[13px] text-[var(--ink-2)]">
               No open items match these filters.
             </p>

@@ -8,6 +8,7 @@ import { CardStack, EntityCard, ragTone, SectionLabel } from "@/components/ui/Li
 import { computeInvoiceMetrics } from "@/lib/metrics/finance";
 import { collectabilityScore, rankWord } from "@/lib/metrics/derived";
 import { formatAsOf, formatDate, money, pct, pts } from "@/lib/format";
+import { NotInBook } from "@/components/book/NotInBook";
 
 export const dynamic = "force-dynamic";
 
@@ -61,14 +62,19 @@ export default async function MoneyPage({
   const focus = params.focus;
 
   const marginRows = payload.metrics.projects
-    .filter((m) => projects.get(m.ProjectID)?.Status === "Active")
+    .filter(
+      (m) =>
+        projects.get(m.ProjectID)?.Status === "Active" && m.marginReady,
+    )
     .sort((a, b) => a.ForecastMarginPct - b.ForecastMarginPct)
     .slice(0, 8);
 
   const unbilledRows = payload.metrics.projects
     .filter(
       (m) =>
-        projects.get(m.ProjectID)?.Status === "Active" && m.UnbilledWIP > 0,
+        projects.get(m.ProjectID)?.Status === "Active" &&
+        m.marginReady &&
+        m.UnbilledWIP > 0,
     )
     .sort((a, b) => b.UnbilledWIP - a.UnbilledWIP)
     .slice(0, 8);
@@ -208,7 +214,11 @@ export default async function MoneyPage({
           </SectionLabel>
           <CardStack>
           {(focus === "overdue" ? overdue : invoices).length === 0 ? (
-            <Empty>No open invoices in this view.</Empty>
+            payload.dataset.invoices.length === 0 ? (
+              <NotInBook view="Money" />
+            ) : (
+              <Empty>No open invoices in this view.</Empty>
+            )
           ) : (
             (focus === "overdue" ? overdue : invoices)
               .slice(0, 12)

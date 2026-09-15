@@ -1,5 +1,7 @@
 # CURSOR.md — agent instructions for Portfolio Pulse
 
+Start at the repo [README.md](../../README.md) for how a person runs and uses Pulse. This file is for agents.
+
 Read this first. It tells you what the product is, what is currently broken,
 what order to fix it in, and the rules you must not break.
 

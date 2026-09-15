@@ -46,13 +46,18 @@ export function computePortfolioKPIs(
   const active = dataset.projects.filter((p) => p.Status === "Active");
   const activeMetrics = active.map((p) => byId.get(p.ProjectID)!);
 
-  const activeContractValue = activeMetrics.reduce(
-    (s, m) => s + m.CurrentContractValue,
-    0,
-  );
-  const activeBudget = activeMetrics.reduce((s, m) => s + m.CurrentBudget, 0);
-  const actualCostActive = activeMetrics.reduce((s, m) => s + m.ActualCost, 0);
-  const eacActive = activeMetrics.reduce((s, m) => s + m.EAC, 0);
+  const activeContractValue = activeMetrics
+    .filter((m) => m.marginReady)
+    .reduce((s, m) => s + m.CurrentContractValue, 0);
+  const activeBudget = activeMetrics
+    .filter((m) => m.costReady)
+    .reduce((s, m) => s + m.CurrentBudget, 0);
+  const actualCostActive = activeMetrics
+    .filter((m) => m.costReady)
+    .reduce((s, m) => s + m.ActualCost, 0);
+  const eacActive = activeMetrics
+    .filter((m) => m.costReady)
+    .reduce((s, m) => s + m.EAC, 0);
   const forecastMarginPct =
     activeContractValue === 0
       ? 0
@@ -62,6 +67,7 @@ export function computePortfolioKPIs(
       ? 0
       : active.reduce((s, p) => {
           const m = byId.get(p.ProjectID)!;
+          if (!m.marginReady) return s;
           return s + m.CurrentContractValue * p.TargetMarginPct;
         }, 0) / activeContractValue;
 
@@ -76,11 +82,12 @@ export function computePortfolioKPIs(
     healthScores.length === 0
       ? 0
       : healthScores.reduce((a, b) => a + b, 0) / healthScores.length;
+  const slipScores = activeMetrics.filter((m) => m.scheduleReady);
   const averageScheduleSlip =
-    activeMetrics.length === 0
+    slipScores.length === 0
       ? 0
-      : activeMetrics.reduce((s, m) => s + m.ScheduleSlipDays, 0) /
-        activeMetrics.length;
+      : slipScores.reduce((s, m) => s + m.ScheduleSlipDays, 0) /
+        slipScores.length;
 
   const resources = computeAllResourceMetrics(dataset, asOf);
   const overallocated = resources.filter(
@@ -110,7 +117,9 @@ export function computePortfolioKPIs(
       return s + inv.Amount;
     }, 0);
 
-  const unbilledWipActive = activeMetrics.reduce((s, m) => s + m.UnbilledWIP, 0);
+  const unbilledWipActive = activeMetrics
+    .filter((m) => m.marginReady)
+    .reduce((s, m) => s + m.UnbilledWIP, 0);
 
   const openRaid = dataset.raid.filter((r) => r.Status !== "Closed");
   // Summary counts Critical severity across all RAID types (not Risk-only)

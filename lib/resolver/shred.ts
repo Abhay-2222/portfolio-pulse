@@ -24,7 +24,8 @@ function csv(aoa: unknown[][]): Buffer {
   return Buffer.from(XLSX.utils.sheet_to_csv(sheet), "utf8");
 }
 
-function ymd(d: Date): string {
+function ymd(d: Date | null | undefined): string {
+  if (!d) return "";
   return d.toISOString().slice(0, 10);
 }
 

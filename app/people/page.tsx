@@ -6,6 +6,7 @@ import { MeterBar } from "@/components/ui/Meter";
 import { CardStack, EntityCard } from "@/components/ui/ListCard";
 import { PeopleSearch } from "@/components/people/PeopleSearch";
 import { formatAsOf, pct } from "@/lib/format";
+import { NotInBook } from "@/components/book/NotInBook";
 
 export const dynamic = "force-dynamic";
 
@@ -185,7 +186,9 @@ export default async function PeoplePage({
             </EntityCard>
           );
         })}
-        {rows.length === 0 ? (
+        {payload.dataset.resources.length === 0 ? (
+          <NotInBook view="People" />
+        ) : rows.length === 0 ? (
           <p className="card-tile text-[15px] text-[var(--ink-2)]">
             {q ? (
               <>

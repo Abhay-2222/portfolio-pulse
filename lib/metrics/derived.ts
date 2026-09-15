@@ -78,6 +78,7 @@ export function wipSplit(activeMetrics: ProjectMetrics[]): {
   let gross = 0;
   let overbilled = 0;
   for (const m of activeMetrics) {
+    if (!m.marginReady) continue;
     if (m.UnbilledWIP > 0) gross += m.UnbilledWIP;
     else overbilled += m.UnbilledWIP;
   }

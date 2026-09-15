@@ -59,7 +59,7 @@ export function resolveInbox(
   folder: string,
   files: InboxFile[],
   catalog: CatalogProject[],
-  recipes: RecipeStore = { groupings: {} },
+  recipes: RecipeStore = { groupings: {}, bindings: {} },
 ): ResolverReport {
   const records: FileRecord[] = [];
   const tables = [];

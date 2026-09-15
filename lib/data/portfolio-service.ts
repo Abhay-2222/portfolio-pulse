@@ -20,6 +20,10 @@ import type { ResolverReport } from "@/lib/resolver/types";
 import type { PortfolioKPIs } from "@/lib/metrics/portfolio";
 import type { ProjectMetrics } from "@/lib/metrics/project";
 import type { ResourceMetrics } from "@/lib/metrics/resource";
+import type { BookMeta } from "@/lib/data/user-source";
+import type { BookCoverage } from "@/lib/data/coverage";
+import { emptyCoverage } from "@/lib/data/coverage";
+import { finalizeCoverage } from "@/lib/data/map-workbook";
 
 export interface PortfolioPayload {
   version: string;
@@ -40,6 +44,8 @@ export interface PortfolioPayload {
   };
   issues: DataIssue[];
   resolver: ResolverReport | null;
+  book: BookMeta;
+  coverage: BookCoverage;
 }
 
 let cache: { version: string; payload: PortfolioPayload } | null = null;
@@ -71,6 +77,11 @@ export function buildPortfolioPayload(result: ParseResult): PortfolioPayload {
   const projects = computeAllProjectMetrics(result.dataset, asOf);
   const resources = computeAllResourceMetrics(result.dataset, asOf);
   const portfolio = computePortfolioKPIs(result.dataset, asOf, projects);
+  const coverage = finalizeCoverage(
+    result,
+    result.coverage ?? emptyCoverage(),
+    projects,
+  );
   const findings = evaluateFindings(
     result.dataset,
     projects,
@@ -98,6 +109,14 @@ export function buildPortfolioPayload(result: ParseResult): PortfolioPayload {
     },
     issues: result.issues,
     resolver: null,
+    coverage,
+    book: {
+      kind: "demo",
+      label: "Demo book",
+      path: "",
+      href: null,
+      ephemeral: false,
+    },
   };
 }
 
@@ -108,20 +127,22 @@ export async function loadPortfolio(force = false): Promise<PortfolioPayload> {
       `DATA_SOURCE=${source} is not implemented in phase 1. Use local.`,
     );
   }
-  const { LocalFileSource, getDataFilePath } = await import(
-    "@/lib/data/sources/local"
-  );
-  const filePath = getDataFilePath();
+  const { LocalFileSource } = await import("@/lib/data/sources/local");
+  const { getBookMeta } = await import("@/lib/data/user-source");
+  const book = await getBookMeta();
+  const filePath = book.path;
   ensureWorkbookWatch(filePath);
   const local = new LocalFileSource(filePath);
   if (!force) {
     const version = await local.peekVersion();
     if (cache && cache.version === version) {
-      return withOverlay(cache.payload);
+      const overlaid = await withOverlay(cache.payload);
+      return { ...overlaid, book };
     }
   }
   const result = await local.fetch();
   const payload = buildPortfolioPayload(result);
+  payload.book = book;
   try {
     const { shredMaster } = await import("@/lib/resolver/shred");
     const { resolveInbox } = await import("@/lib/resolver/resolve");

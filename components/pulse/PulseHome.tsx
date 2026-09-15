@@ -10,6 +10,8 @@ import { StatusGlyph } from "@/components/ui/StatusGlyph";
 import { formatAsOf, moneyExact, pct, pts } from "@/lib/format";
 import { worstLegLabel } from "@/lib/metrics/rag";
 import { lastSnapshotAgeDays, snapshotSpark } from "@/lib/metrics/derived";
+import { BookMore } from "@/components/book/BookMore";
+import { hasBookMore } from "@/lib/data/coverage";
 
 export function PulseHome({ payload }: { payload: PortfolioPayload }) {
   const kpis = payload.metrics.portfolio;
@@ -37,10 +39,10 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
             (c) => c.ClientID === project?.ClientID,
           )?.ClientName ?? "",
         health: m.HealthScore,
-        margin: m.ForecastMarginPct,
+        margin: m.marginReady ? m.ForecastMarginPct : null,
         targetMargin: project?.TargetMarginPct ?? 0,
-        contract: m.CurrentContractValue,
-        slip: m.ScheduleSlipDays,
+        contract: m.marginReady ? m.CurrentContractValue : null,
+        slip: m.scheduleReady ? m.ScheduleSlipDays : null,
         rag: m.OverallRAG,
         worstLeg: worstLegLabel(m),
         costRag: m.CostRAG,
@@ -67,7 +69,36 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
   }).length;
 
   return (
-    <AppShell active="pulse" title="Home" asOf={formatAsOf(payload.asOfDate)}>
+    <AppShell
+      active="pulse"
+      title="Home"
+      asOf={formatAsOf(payload.asOfDate)}
+      refreshMinutes={payload.dataset.settings.AutoRefreshMinutes}
+    >
+      <p className="px-1 text-[12px] leading-4 text-[var(--ink-2)]">
+        Source ·{" "}
+        <Link href="/book" className="text-[var(--accent)]">
+          {payload.book.label}
+        </Link>
+        {" · "}
+        <Link href="/guide" className="text-[var(--accent)]">
+          Guide
+        </Link>
+        {payload.book.href ? (
+          <>
+            {" · "}
+            <a
+              href={payload.book.href}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--accent)]"
+            >
+              Open
+            </a>
+          </>
+        ) : null}
+      </p>
+
       <ProjectBentoCarousel projects={bentoProjects} />
 
       <section className="space-y-3" aria-labelledby="book-label">
@@ -161,6 +192,9 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
           </MagicBentoCard>
         ) : null}
         </MagicBentoGrid>
+        {hasBookMore(payload.coverage) ? (
+          <BookMore coverage={payload.coverage} />
+        ) : null}
       </section>
     </AppShell>
   );

@@ -19,8 +19,8 @@ export default async function HomePage() {
           Portfolio Pulse
         </h1>
         <p className="mt-3 text-[17px] text-[var(--ink-2)]">
-          Couldn&apos;t read the workbook. Check DATA_FILE_PATH and that
-          required sheets exist.
+          Couldn&apos;t read the workbook. Upload a matching .xlsx on Book,
+          or check DATA_FILE_PATH.
         </p>
         <pre className="mt-6 overflow-auto rounded-[14px] bg-[var(--surface)] p-4 text-[13px] text-[var(--off-track-text)]">
           {error}

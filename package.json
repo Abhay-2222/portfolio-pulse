@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "fixture:cousin": "tsx scripts/generate-cousin.ts"
   },
   "dependencies": {
     "date-fns": "^4.4.0",

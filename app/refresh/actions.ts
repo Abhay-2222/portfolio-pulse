@@ -8,6 +8,8 @@ import {
 
 export async function refreshBriefing() {
   clearPortfolioCache();
+  const { refreshActiveRemote } = await import("@/lib/data/user-source");
+  await refreshActiveRemote();
   await loadPortfolio(true);
   revalidatePath("/", "layout");
 }

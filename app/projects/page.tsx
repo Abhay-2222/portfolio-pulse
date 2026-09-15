@@ -115,16 +115,22 @@ export default async function ProjectsPage({
       <CardStack>
         {rows.map((row) => {
           const worst =
-            row.metrics.OverallRAG === "Red" ||
-            row.metrics.OverallRAG === "Amber"
-              ? worstLegLabel(row.metrics)
-              : "on track";
+            row.metrics.OverallRAG === "N/A"
+              ? "—"
+              : row.metrics.OverallRAG === "Red" ||
+                  row.metrics.OverallRAG === "Amber"
+                ? worstLegLabel(row.metrics)
+                : "on track";
           const meta = [
             worst,
-            row.metrics.ScheduleSlipDays > 0
+            row.metrics.scheduleReady && row.metrics.ScheduleSlipDays > 0
               ? `${row.metrics.ScheduleSlipDays}d slip`
-              : null,
-            money(row.metrics.CurrentContractValue),
+              : row.metrics.scheduleReady
+                ? null
+                : "slip —",
+            row.metrics.marginReady
+              ? money(row.metrics.CurrentContractValue)
+              : "contract —",
           ]
             .filter(Boolean)
             .join(" · ");
@@ -137,10 +143,16 @@ export default async function ProjectsPage({
               meta={meta}
               rag={row.metrics.OverallRAG}
               tone={ragTone(row.metrics.OverallRAG)}
-              figure={pct(row.metrics.ForecastMarginPct)}
+              figure={
+                row.metrics.marginReady
+                  ? pct(row.metrics.ForecastMarginPct)
+                  : "—"
+              }
               figureLabel="Margin"
               figureTone={
-                row.metrics.ForecastMarginPct < 0 ? "bad" : "neutral"
+                row.metrics.marginReady && row.metrics.ForecastMarginPct < 0
+                  ? "bad"
+                  : "neutral"
               }
             />
           );

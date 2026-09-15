@@ -11,10 +11,10 @@ export type ProjectBento = {
   name: string;
   client: string;
   health: number | null;
-  margin: number;
+  margin: number | null;
   targetMargin: number;
-  contract: number;
-  slip: number;
+  contract: number | null;
+  slip: number | null;
   rag: string;
   worstLeg: string;
   costRag: string;
@@ -143,12 +143,14 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
           className="figure mt-1.5"
           style={{
             color:
-              p.margin < p.targetMargin
-                ? "var(--off-track-text)"
-                : "var(--ink)",
+              p.margin == null
+                ? "var(--ink)"
+                : p.margin < p.targetMargin
+                  ? "var(--off-track-text)"
+                  : "var(--ink)",
           }}
         >
-          {pct(p.margin)}
+          {p.margin == null ? "—" : pct(p.margin)}
         </div>
         {p.spark.length >= 2 ? (
           <Sparkline values={p.spark} label={`${p.spark.length} mo`} />
@@ -163,10 +165,10 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
         <div
           className="figure mt-1.5"
           style={{
-            color: p.slip > 0 ? "var(--off-track-text)" : "var(--ink)",
+            color: p.slip != null && p.slip > 0 ? "var(--off-track-text)" : "var(--ink)",
           }}
         >
-          {p.slip}d
+          {p.slip == null ? "—" : `${p.slip}d`}
         </div>
       </Tile>
 
@@ -175,7 +177,9 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
         className="border border-[var(--hairline)] bg-[var(--surface)]"
       >
         <p className="kicker">Contract</p>
-        <div className="figure mt-1.5">{money(p.contract)}</div>
+        <div className="figure mt-1.5">
+          {p.contract == null ? "—" : money(p.contract)}
+        </div>
       </Tile>
 
       <Tile
@@ -185,7 +189,9 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
         <p className="kicker">
           {p.unbilled >= 0 ? "Earned, unbilled" : "Over-billed"}
         </p>
-        <div className="figure mt-1.5">{unbilledAbs}</div>
+        <div className="figure mt-1.5">
+          {p.margin == null ? "—" : unbilledAbs}
+        </div>
       </Tile>
     </div>
   );

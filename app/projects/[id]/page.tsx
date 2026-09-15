@@ -24,6 +24,8 @@ import {
 } from "@/lib/metrics/finance";
 import { computeRaidMetrics } from "@/lib/metrics/risk";
 import { formatAsOf, formatDate, money, pct } from "@/lib/format";
+import { ProjectMore } from "@/components/book/ProjectMore";
+import { entityCoverage, hasEntityMore } from "@/lib/data/coverage";
 
 export const dynamic = "force-dynamic";
 
@@ -101,6 +103,7 @@ export default async function ProjectDetailPage({
   const uninvoicedHere = payload.derived.uninvoicedMilestones.filter(
     (m) => m.ProjectID === id,
   );
+  const more = entityCoverage(payload.coverage, id);
   const contributors = healthContributors(project, metrics, payload.dataset);
   const why = healthWhyLine(metrics, contributors);
   const copy = [
@@ -254,18 +257,29 @@ export default async function ProjectDetailPage({
         cells={[
           {
             label: "Contract",
-            value: money(metrics.CurrentContractValue),
+            value: metrics.marginReady ? money(metrics.CurrentContractValue) : "—",
           },
           {
             label: "Forecast margin",
-            value: pct(metrics.ForecastMarginPct),
-            tone: metrics.ForecastMarginPct < 0 ? "bad" : "neutral",
+            value: metrics.marginReady ? pct(metrics.ForecastMarginPct) : "—",
+            tone:
+              metrics.marginReady && metrics.ForecastMarginPct < 0
+                ? "bad"
+                : "neutral",
           },
-          { label: "Complete", value: pct(project.PctComplete) },
+          {
+            label: "Complete",
+            value: (project.absent ?? []).includes("PctComplete")
+              ? "—"
+              : pct(project.PctComplete),
+          },
           {
             label: "Slip",
-            value: `${metrics.ScheduleSlipDays}d`,
-            tone: metrics.ScheduleSlipDays > 14 ? "bad" : "neutral",
+            value: metrics.scheduleReady ? `${metrics.ScheduleSlipDays}d` : "—",
+            tone:
+              metrics.scheduleReady && metrics.ScheduleSlipDays > 14
+                ? "bad"
+                : "neutral",
           },
         ]}
       />
@@ -415,7 +429,11 @@ export default async function ProjectDetailPage({
 
       <Section title="Open risks & issues">
         {risks.length === 0 ? (
-          <Empty>No open RAID items.</Empty>
+          <Empty>
+            {payload.dataset.raid.length === 0
+              ? "RAID is not in this book."
+              : "RAID unavailable for this project."}
+          </Empty>
         ) : (
           <CardStack>
             {risks.slice(0, 8).map(({ item, metrics: rm }) => (
@@ -459,6 +477,8 @@ export default async function ProjectDetailPage({
           </CardStack>
         )}
       </Section>
+
+      {hasEntityMore(more) && more ? <ProjectMore entity={more} /> : null}
 
       <p className="px-1 text-[13px] text-[var(--ink-3)]">
         Read-only from the workbook. EAC is the CPI method. Currency CAD.

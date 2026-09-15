@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTransition, type ReactNode } from "react";
+import { useEffect, useRef, useTransition, type ReactNode } from "react";
 import { PulseMark } from "@/components/ui/PulseMark";
 import { IconBack, IconRefresh, IconSettings, iconHit } from "@/components/ui/Icons";
 import { refreshBriefing } from "@/app/refresh/actions";
@@ -16,6 +16,8 @@ const PRIMARY = [
 ] as const;
 
 const SIDE = [
+  { href: "/book", label: "Book", id: "book" },
+  { href: "/guide", label: "Guide", id: "guide" },
   { href: "/clients", label: "Clients", id: "clients" },
   { href: "/decisions", label: "Decisions", id: "decisions" },
   { href: "/sources", label: "Sources", id: "sources" },
@@ -34,6 +36,7 @@ export function AppShell({
   active,
   title,
   backHref,
+  refreshMinutes,
   children,
 }: {
   active: TabId;
@@ -41,11 +44,31 @@ export function AppShell({
   asOf?: string;
   backHref?: string;
   source?: ReactNode;
+  refreshMinutes?: number;
   children: ReactNode;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const pendingRef = useRef(pending);
+  pendingRef.current = pending;
+  const minutes =
+    refreshMinutes != null && refreshMinutes > 0 ? refreshMinutes : 5;
+
+  function runRefresh() {
+    if (pendingRef.current) return;
+    startTransition(async () => {
+      await refreshBriefing();
+      router.refresh();
+    });
+  }
+
+  useEffect(() => {
+    const id = window.setInterval(runRefresh, minutes * 60_000);
+    return () => window.clearInterval(id);
+    // Intentionally only re-arm when the interval length changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minutes]);
 
   return (
     <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] lg:flex">
@@ -110,16 +133,11 @@ export function AppShell({
                 aria-label="Refresh briefing"
                 aria-busy={pending}
                 disabled={pending}
-                onClick={() => {
-                  startTransition(async () => {
-                    await refreshBriefing();
-                    router.refresh();
-                  });
-                }}
+                onClick={() => runRefresh()}
               >
                 <IconRefresh className={pending ? "animate-spin" : undefined} />
               </button>
-              <Link href="/sources" className={iconHit} aria-label="Settings">
+              <Link href="/book" className={iconHit} aria-label="Your book">
                 <IconSettings />
               </Link>
             </div>

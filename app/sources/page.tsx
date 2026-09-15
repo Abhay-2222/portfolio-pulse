@@ -20,9 +20,12 @@ export default async function SourcesPage() {
       asOf={formatAsOf(payload.asOfDate)}
     >
       <p className="px-1 text-[13px] leading-5 text-[var(--ink-2)]">
-        Messy folder derived from the golden workbook. Confirm groupings;
-        Pulse still reads the master, so the briefing does not change when
-        junk and duplicates are in the pile.
+        Mapping demo over shredded copies of the current book. Confirm
+        groupings here; change which workbook Pulse reads on{" "}
+        <a href="/book" className="text-[var(--accent)]">
+          Book
+        </a>
+        .
       </p>
 
       {!report ? (

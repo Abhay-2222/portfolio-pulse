@@ -89,6 +89,7 @@ describe("workbook parse + metrics oracle", () => {
     expect(dataset.settings.RAG_ScheduleRedDays).toBe(45);
     expect(dataset.settings.MarginFloor).toBe(0.15);
     expect(dataset.settings.RiskCriticalScore).toBe(15);
+    expect(dataset.settings.AutoRefreshMinutes).toBe(5);
   });
 
   it("matches Summary sheet KPI oracle", () => {

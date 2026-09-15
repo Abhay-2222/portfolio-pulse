@@ -35,13 +35,15 @@ export interface Project {
   Priority: Priority;
   ContractType: ContractType;
   StrategicScore: number;
-  BaselineStart: Date;
-  BaselineEnd: Date;
-  ForecastEnd: Date;
+  BaselineStart: Date | null;
+  BaselineEnd: Date | null;
+  ForecastEnd: Date | null;
   OriginalContractValue: number;
   TargetMarginPct: number;
   PctComplete: number;
   LastStatusUpdate: Date | null;
+  /** Canonical fields that were blank on this row (mapped ingest). */
+  absent?: string[];
 }
 
 export interface Resource {
@@ -254,4 +256,5 @@ export interface ParseResult {
   issues: DataIssue[];
   version: string;
   fetchedAt: Date;
+  coverage?: import("@/lib/data/coverage").BookCoverage;
 }

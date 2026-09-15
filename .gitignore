@@ -39,6 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# local resolver overlay
+# local resolver overlay + user books
 /data/recipes.json
 /data/overlay.json
+/data/user-source.json
+/data/uploads/
+/data/fixtures/*.xlsx

@@ -40,6 +40,9 @@ export interface ProjectMetrics {
   MarginRAG: RAG;
   OverallRAG: RAG;
   HealthScore: number | null;
+  costReady: boolean;
+  scheduleReady: boolean;
+  marginReady: boolean;
 }
 
 function sum(nums: number[]): number {
@@ -81,15 +84,26 @@ export function computeProjectMetrics(
   const CurrentBudget = BaselineBudget + ApprovedCRCost;
   const ActualCost = sum(actuals.map((a) => a.Amount));
   const ActualHours = sum(actuals.map((a) => a.Hours ?? 0));
+  const absent = new Set(project.absent ?? []);
+  const hasDates = project.BaselineStart != null && project.BaselineEnd != null;
+  const hasForecast = project.ForecastEnd != null && project.BaselineEnd != null;
+  const hasContract = !absent.has("OriginalContractValue");
+  const hasPct = !absent.has("PctComplete");
+  const hasTarget = !absent.has("TargetMarginPct");
+  const costReady = budget.length > 0 && actuals.length > 0 && hasPct;
+  const scheduleReady = hasForecast && hasDates;
+  const marginReady = costReady && hasContract && hasTarget;
 
   let ElapsedPct: number;
   if (project.Status === "Completed") {
     ElapsedPct = 1;
-  } else if (asOf.getTime() <= project.BaselineStart.getTime()) {
+  } else if (!hasDates) {
+    ElapsedPct = 0;
+  } else if (asOf.getTime() <= project.BaselineStart!.getTime()) {
     ElapsedPct = 0;
   } else {
-    const span = Math.max(1, calendarDays(project.BaselineStart, project.BaselineEnd));
-    ElapsedPct = Math.min(1, calendarDays(project.BaselineStart, asOf) / span);
+    const span = Math.max(1, calendarDays(project.BaselineStart!, project.BaselineEnd!));
+    ElapsedPct = Math.min(1, calendarDays(project.BaselineStart!, asOf) / span);
   }
 
   const EarnedValue = project.PctComplete * CurrentBudget;
@@ -113,9 +127,12 @@ export function computeProjectMetrics(
   const ForecastMarginPct =
     CurrentContractValue === 0 ? 0 : ForecastMarginAmt / CurrentContractValue;
   const MarginVsTarget = ForecastMarginPct - project.TargetMarginPct;
-  const ScheduleSlipDays = calendarDays(project.BaselineEnd, project.ForecastEnd);
+  const ScheduleSlipDays =
+    hasForecast && project.BaselineEnd && project.ForecastEnd
+      ? calendarDays(project.BaselineEnd, project.ForecastEnd)
+      : 0;
   const DaysRemaining =
-    project.Status === "Completed"
+    project.Status === "Completed" || !project.ForecastEnd
       ? 0
       : Math.max(0, calendarDays(asOf, project.ForecastEnd));
 
@@ -152,30 +169,44 @@ export function computeProjectMetrics(
     }
   }
 
-  const CostRAG = costRAG(
-    project.Status,
-    BudgetBurnPct,
-    project.PctComplete,
-    settings.RAG_CostAmber,
-    settings.RAG_CostRed,
-  );
-  const ScheduleRAG = scheduleRAG(
-    project.Status,
-    ScheduleSlipDays,
-    settings.RAG_ScheduleAmberDays,
-    settings.RAG_ScheduleRedDays,
-  );
-  const MarginRAG = marginRAG(
-    project.Status,
-    ForecastMarginPct,
-    project.TargetMarginPct,
-    settings.MarginFloor,
-    settings.MarginTolerance,
-  );
+  const CostRAG =
+    !costReady || project.Status === "Planned"
+      ? "N/A"
+      : costRAG(
+          project.Status,
+          BudgetBurnPct,
+          project.PctComplete,
+          settings.RAG_CostAmber,
+          settings.RAG_CostRed,
+        );
+  const ScheduleRAG =
+    !scheduleReady || project.Status === "Planned"
+      ? "N/A"
+      : scheduleRAG(
+          project.Status,
+          ScheduleSlipDays,
+          settings.RAG_ScheduleAmberDays,
+          settings.RAG_ScheduleRedDays,
+        );
+  const MarginRAG =
+    !marginReady || project.Status === "Planned"
+      ? "N/A"
+      : marginRAG(
+          project.Status,
+          ForecastMarginPct,
+          project.TargetMarginPct,
+          settings.MarginFloor,
+          settings.MarginTolerance,
+        );
   const OverallRAG = worstRAG(CostRAG, ScheduleRAG, MarginRAG);
 
   let HealthScore: number | null = null;
-  if (project.Status !== "Planned") {
+  if (
+    project.Status !== "Planned" &&
+    costReady &&
+    scheduleReady &&
+    marginReady
+  ) {
     const raw =
       100 -
       150 * Math.max(0, BudgetBurnPct - project.PctComplete) -
@@ -221,6 +252,9 @@ export function computeProjectMetrics(
     MarginRAG,
     OverallRAG,
     HealthScore,
+    costReady,
+    scheduleReady,
+    marginReady,
   };
 }
 

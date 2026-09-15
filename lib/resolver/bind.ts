@@ -97,6 +97,13 @@ const SYNONYMS: Record<string, string> = {
   contract: "OriginalContractValue",
   "target margin": "TargetMarginPct",
   merchant: "Vendor",
+  "invoice date": "InvoiceDate",
+  "paid date": "PaidDate",
+  "employee id": "EmployeeID",
+  "invoice id": "InvoiceID",
+  "raid id": "RAIDID",
+  "cost exposure": "CostExposure",
+  "raised date": "RaisedDate",
 };
 
 const CANONICAL = new Map<string, { field: string; table: string }>();
@@ -166,6 +173,65 @@ export function bindHeader(header: string): ColumnBinding {
 
 export function bindHeaders(headers: string[]): ColumnBinding[] {
   return headers.filter(Boolean).map(bindHeader);
+}
+
+export function bindHeaderForTable(
+  header: string,
+  table: TableName,
+): ColumnBinding {
+  const expected = TABLE_HEADERS[table] as readonly string[];
+  const norm = normalizeHeader(header);
+  if (!norm) {
+    return {
+      sourceHeader: header,
+      canonical: null,
+      table: null,
+      confidence: "low",
+      rung: 6,
+    };
+  }
+  for (const col of expected) {
+    if (normalizeHeader(col) === norm) {
+      return {
+        sourceHeader: header,
+        canonical: col,
+        table,
+        confidence: "high",
+        rung: 1,
+      };
+    }
+  }
+  const syn = SYNONYMS[norm];
+  if (syn && (expected as readonly string[]).includes(syn)) {
+    return {
+      sourceHeader: header,
+      canonical: syn,
+      table,
+      confidence: "high",
+      rung: 2,
+    };
+  }
+  let best: { field: string; score: number } | null = null;
+  for (const col of expected) {
+    const score = jaroWinkler(norm, normalizeHeader(col));
+    if (!best || score > best.score) best = { field: col, score };
+  }
+  if (best && best.score >= 0.92) {
+    return {
+      sourceHeader: header,
+      canonical: best.field,
+      table,
+      confidence: "medium",
+      rung: 3,
+    };
+  }
+  return {
+    sourceHeader: header,
+    canonical: null,
+    table: null,
+    confidence: "low",
+    rung: 6,
+  };
 }
 
 export function bindingAccuracy(bindings: ColumnBinding[]): number {
