@@ -17,7 +17,7 @@ Pulse ships it as the demo briefing and as **Download template** on Book (`/book
 
 Column names: [`../lib/data/schema.ts`](../lib/data/schema.ts).
 
-A cousin export (renamed headers, extra sheets, skinny rows) can still brief via Book mapping. Leftovers go to **More**. Missing metrics show **—**.
+A cousin export (renamed headers, extra sheets, skinny rows) can still brief via Book mapping. Leftovers go to **More**. Missing metrics show **n/a**.
 
 ## Cousin fixture (messy sample)
 
