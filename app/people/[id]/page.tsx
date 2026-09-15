@@ -152,7 +152,7 @@ export default async function PersonDetailPage({
             {findings.map((f) => (
               <div
                 key={f.id}
-                className="card-tile card-tile--bad overflow-hidden border-l-[3px] border-l-[var(--off-track-text)] !p-0"
+                className="card-tile card-tile--bad"
               >
                 <FindingCard
                   finding={f}

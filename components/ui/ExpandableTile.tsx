@@ -7,31 +7,37 @@ export function ExpandableTile({
   detail,
   defaultOpen = false,
   accent = false,
+  flush = false,
 }: {
   summary: ReactNode;
   detail: ReactNode;
   defaultOpen?: boolean;
   accent?: boolean;
+  flush?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const panelId = useId();
 
   return (
     <div
-      className={`overflow-hidden rounded-[10px] border transition-[box-shadow,transform] duration-200 ${
-        accent
-          ? "border-transparent bg-[var(--accent)] text-white"
-          : "border-[var(--tile-border)] bg-[var(--surface)]"
-      } ${open ? "shadow-[0_12px_40px_rgba(0,0,0,0.1)]" : ""}`}
+      className={
+        flush
+          ? "overflow-hidden"
+          : `overflow-hidden rounded-[10px] border transition-[box-shadow,transform] duration-200 ${
+              accent
+                ? "border-transparent bg-[var(--accent)] text-white"
+                : "border-[var(--tile-border)] bg-[var(--surface)]"
+            } ${open ? "shadow-[0_12px_40px_rgba(0,0,0,0.1)]" : ""}`
+      }
     >
       <button
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
-        className={`flex w-full min-h-11 items-start gap-2 px-3 py-3 text-left ${
-          accent ? "text-white" : "text-[var(--ink)]"
-        }`}
+        className={`flex w-full items-start gap-2 text-left ${
+          flush ? "min-h-9 py-0.5" : "min-h-11 px-3 py-3"
+        } ${accent ? "text-white" : "text-[var(--ink)]"}`}
       >
         <span
           className={`mt-[1px] text-[14px] font-normal leading-none transition-transform duration-200 ${
@@ -51,10 +57,14 @@ export function ExpandableTile({
       >
         <div className="overflow-hidden">
           <div
-            className={`border-t px-3 pb-3 pt-2 text-[13px] leading-relaxed ${
-              accent
-                ? "border-white/20 text-white/80"
-                : "border-[var(--tile-border)] text-[var(--ink-2)]"
+            className={`${
+              flush
+                ? "pt-2 text-[13px] leading-relaxed text-[var(--ink-2)]"
+                : `border-t px-3 pb-3 pt-2 text-[13px] leading-relaxed ${
+                    accent
+                      ? "border-white/20 text-white/80"
+                      : "border-[var(--tile-border)] text-[var(--ink-2)]"
+                  }`
             }`}
           >
             {detail}

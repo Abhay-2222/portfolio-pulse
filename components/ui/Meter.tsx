@@ -5,6 +5,7 @@ export function MeterBar({
   tone = "neutral",
   formatValue,
   showValue = true,
+  className = "mt-1.5",
 }: {
   value: number;
   reference: number;
@@ -12,6 +13,7 @@ export function MeterBar({
   tone?: "good" | "watch" | "bad" | "neutral";
   formatValue?: (n: number) => string;
   showValue?: boolean;
+  className?: string;
 }) {
   const scale = Math.max(value, reference, 1) * (value > reference ? 1.08 : 1);
   const fill = Math.max(2, (Math.max(0, value) / scale) * 100);
@@ -26,17 +28,21 @@ export function MeterBar({
           : "var(--ink)";
   const shown = formatValue ? formatValue(value) : String(value);
   return (
-    <div className="mt-1.5">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="kicker">{label}</span>
-        {showValue ? (
+    <div className={className}>
+      {showValue ? (
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="kicker">{label}</span>
           <span className="text-[11px] font-normal text-[var(--ink-2)]">
             {shown}
           </span>
-        ) : null}
-      </div>
+        </div>
+      ) : (
+        <span className="sr-only">{label}</span>
+      )}
       <div
-        className="relative mt-1.5 h-2 w-full overflow-visible rounded-full bg-[var(--surface-2)]"
+        className={`relative h-2 w-full overflow-visible rounded-full bg-[var(--surface-2)] ${
+          showValue ? "mt-1.5" : ""
+        }`}
         role="img"
         aria-label={`${label} ${shown}, mark at ${reference}`}
       >

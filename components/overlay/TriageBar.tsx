@@ -16,14 +16,16 @@ import {
 } from "@/app/overlay/actions";
 
 const moreBtn =
-  "flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] border border-[var(--tile-border)] bg-[var(--surface)] text-[15px] font-normal leading-none text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "flex shrink-0 items-center justify-center border border-[var(--tile-border)] bg-[var(--surface)] font-normal leading-none text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 export function TriageBar({
   finding,
   copyText,
+  compact = false,
 }: {
   finding: Finding;
   copyText: string;
+  compact?: boolean;
 }) {
   const [panel, setPanel] = useState<"none" | "hold" | "more">("none");
   const [copied, setCopied] = useState(false);
@@ -32,6 +34,18 @@ export function TriageBar({
     finding.disposition === "actioned" || finding.disposition === "dismissed";
   const parked = finding.disposition === "snoozed";
   const fingerprint = provenanceFingerprint(finding.provenance);
+  const commit = compact
+    ? `${btnCommit} !min-h-10 !rounded-2xl`
+    : btnCommit;
+  const defer = compact
+    ? `${btnDefer} !min-h-10 !rounded-2xl`
+    : btnDefer;
+  const quiet = compact
+    ? `${btnQuiet} !min-h-10 !rounded-2xl`
+    : btnQuiet;
+  const more = compact
+    ? `${moreBtn} h-10 w-10 rounded-2xl text-[14px]`
+    : `${moreBtn} h-11 w-11 rounded-[12px] text-[15px]`;
 
   async function copy() {
     await navigator.clipboard.writeText(copyText);
@@ -40,7 +54,7 @@ export function TriageBar({
   }
 
   return (
-    <div className="mt-3">
+    <div className={compact ? "mt-2.5" : "mt-3"}>
       <div className="flex items-stretch gap-2">
         {closed ? (
           <form action={reopenFinding} className="min-w-0 flex-1">
@@ -50,14 +64,14 @@ export function TriageBar({
               name="hadOwner"
               value={finding.owner ? "1" : ""}
             />
-            <button type="submit" className={`${btnCommit} w-full`}>
+            <button type="submit" className={`${commit} w-full`}>
               Reopen
             </button>
           </form>
         ) : parked ? (
           <form action={unsnoozeFinding} className="min-w-0 flex-1">
             <input type="hidden" name="id" value={id} />
-            <button type="submit" className={`${btnCommit} w-full`}>
+            <button type="submit" className={`${commit} w-full`}>
               Bring back
             </button>
           </form>
@@ -65,7 +79,7 @@ export function TriageBar({
           <>
             <button
               type="button"
-              className={`${btnDefer} min-w-0 flex-1`}
+              className={`${defer} min-w-0 flex-1`}
               aria-expanded={panel === "hold"}
               onClick={() => setPanel(panel === "hold" ? "none" : "hold")}
             >
@@ -74,14 +88,14 @@ export function TriageBar({
             {finding.owner ? (
               <form action={actionFinding} className="min-w-0 flex-1">
                 <input type="hidden" name="id" value={id} />
-                <button type="submit" className={`${btnDefer} w-full`}>
+                <button type="submit" className={`${defer} w-full`}>
                   Done
                 </button>
               </form>
             ) : (
               <form action={ownFinding} className="min-w-0 flex-1">
                 <input type="hidden" name="id" value={id} />
-                <button type="submit" className={`${btnCommit} w-full`}>
+                <button type="submit" className={`${commit} w-full`}>
                   Take it
                 </button>
               </form>
@@ -90,7 +104,7 @@ export function TriageBar({
         )}
         <button
           type="button"
-          className={moreBtn}
+          className={more}
           aria-label="More actions"
           aria-expanded={panel === "more"}
           onClick={() => setPanel(panel === "more" ? "none" : "more")}
@@ -115,7 +129,7 @@ export function TriageBar({
                 value={finding.amount == null ? "" : String(finding.amount)}
               />
               <input type="hidden" name="fingerprint" value={fingerprint} />
-              <button type="submit" className={`${btnQuiet} w-full px-2 text-[13px]`}>
+              <button type="submit" className={`${quiet} w-full px-2 text-[13px]`}>
                 {opt.label}
               </button>
             </form>
@@ -128,7 +142,7 @@ export function TriageBar({
           {finding.owner && !closed && !parked ? (
             <form action={releaseFinding}>
               <input type="hidden" name="id" value={id} />
-              <button type="submit" className={`${btnDefer} w-full`}>
+              <button type="submit" className={`${defer} w-full`}>
                 Release
               </button>
             </form>
@@ -138,20 +152,20 @@ export function TriageBar({
               {parked || finding.owner ? null : (
                 <form action={actionFinding}>
                   <input type="hidden" name="id" value={id} />
-                  <button type="submit" className={`${btnDefer} w-full`}>
+                  <button type="submit" className={`${defer} w-full`}>
                     Done
                   </button>
                 </form>
               )}
               <form action={dismissFinding}>
                 <input type="hidden" name="id" value={id} />
-                <button type="submit" className={`${btnDefer} w-full`}>
+                <button type="submit" className={`${defer} w-full`}>
                   Skip
                 </button>
               </form>
             </>
           ) : null}
-          <button type="button" className={`${btnDefer} w-full`} onClick={copy}>
+          <button type="button" className={`${defer} w-full`} onClick={copy}>
             {copied ? "Copied" : "Copy finding"}
           </button>
           <form action={noteFinding} className="space-y-2">
@@ -163,7 +177,7 @@ export function TriageBar({
               className="w-full rounded-[12px] border border-[var(--tile-border)] bg-[var(--surface)] px-3 py-2 text-[15px] text-[var(--ink)] outline-none placeholder:text-[var(--ink-3)]"
               placeholder="A line for yourself. Not written to the book."
             />
-            <button type="submit" className={`${btnDefer} w-full`}>
+            <button type="submit" className={`${defer} w-full`}>
               Save note
             </button>
           </form>

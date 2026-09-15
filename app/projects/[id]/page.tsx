@@ -118,7 +118,7 @@ export default async function ProjectDetailPage({
       asOf={formatAsOf(payload.asOfDate)}
       backHref="/projects"
     >
-      <section id="health" className="card-tile scroll-mt-16">
+      <section id="health" className="card-tile space-y-3 scroll-mt-16">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="kicker">
@@ -158,7 +158,7 @@ export default async function ProjectDetailPage({
             <div className="text-right">
               <div className="kicker">Health</div>
               <div
-                className="mt-0.5 text-[22px] font-normal leading-7"
+                className="figure mt-0.5"
                 style={{
                   color:
                     (metrics.HealthScore ?? 100) < 50
@@ -171,51 +171,8 @@ export default async function ProjectDetailPage({
             </div>
           </div>
         </div>
-        {metrics.HealthScore != null ? (
-          <MeterBar
-            value={metrics.HealthScore}
-            reference={100}
-            tone={
-              metrics.OverallRAG === "Red"
-                ? "bad"
-                : metrics.OverallRAG === "Amber"
-                  ? "watch"
-                  : "good"
-            }
-            label="Health 0–100"
-            formatValue={(n) => String(Math.round(n))}
-          />
-        ) : null}
 
-        {metrics.HealthScore != null ? (
-          <div className="mt-4">
-            <p className="text-[15px] font-normal leading-5">{why}</p>
-            <ExpandableTile
-              summary={
-                <span className="text-[13px] font-normal">
-                  Contributors
-                </span>
-              }
-              detail={
-                <ul className="space-y-2">
-                  {contributors.map((c) => (
-                    <li key={c.label}>
-                      {c.label}: −{c.deduction.toFixed(1)} pts · {c.detail}
-                      {c.deduction === 0 ? " (no penalty)" : ""}
-                      <SourceLink refs={c.provenance} compact />
-                    </li>
-                  ))}
-                  <li className="pt-1">
-                    EAC uses the CPI method: remaining work at today&apos;s
-                    efficiency.
-                  </li>
-                </ul>
-              }
-            />
-          </div>
-        ) : null}
-
-        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+        <ul className="flex flex-wrap gap-x-4 gap-y-2">
           <li className="flex items-center gap-1.5">
             <StatusGlyph rag={metrics.CostRAG} size={12} />
             <span className="text-[12px] font-normal leading-4">Cost</span>
@@ -229,6 +186,52 @@ export default async function ProjectDetailPage({
             <span className="text-[12px] font-normal leading-4">Margin</span>
           </li>
         </ul>
+
+        {metrics.HealthScore != null ? (
+          <MeterBar
+            value={metrics.HealthScore}
+            reference={100}
+            tone={
+              metrics.OverallRAG === "Red"
+                ? "bad"
+                : metrics.OverallRAG === "Amber"
+                  ? "watch"
+                  : "good"
+            }
+            label="0–100"
+            showValue={false}
+            className=""
+            formatValue={(n) => String(Math.round(n))}
+          />
+        ) : null}
+
+        {metrics.HealthScore != null ? (
+          <p className="text-[15px] font-normal leading-5">{why}</p>
+        ) : null}
+
+        {metrics.HealthScore != null ? (
+          <ExpandableTile
+            flush
+            summary={
+              <span className="text-[13px] font-normal">Contributors</span>
+            }
+            detail={
+              <ul className="space-y-2">
+                {contributors.map((c) => (
+                  <li key={c.label}>
+                    {c.label}: −{c.deduction.toFixed(1)} pts · {c.detail}
+                    {c.deduction === 0 ? " (no penalty)" : ""}
+                    <SourceLink refs={c.provenance} compact />
+                  </li>
+                ))}
+                <li className="pt-1">
+                  EAC uses the CPI method: remaining work at today&apos;s
+                  efficiency.
+                </li>
+              </ul>
+            }
+          />
+        ) : null}
       </section>
 
       {findings.length > 0 ? (
@@ -238,7 +241,7 @@ export default async function ProjectDetailPage({
             {findings.map((f) => (
               <div
                 key={f.id}
-                className="card-tile card-tile--bad overflow-hidden border-l-[3px] border-l-[var(--off-track-text)] !p-0"
+                className="card-tile card-tile--bad"
               >
                 <FindingCard finding={f} linked={false} compact />
               </div>

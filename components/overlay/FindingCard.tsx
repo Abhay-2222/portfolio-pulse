@@ -22,16 +22,59 @@ export function FindingCard({
 }) {
   const status = statusLine(finding);
   const tier = finding.treatment;
+  const figure = finding.amount != null ? money(finding.amount) : null;
+  const title = compact
+    ? (finding.move ?? finding.headline).replace(/\.$/, "")
+    : finding.headline.replace(/\.$/, "");
+  const figureColor =
+    finding.kind === "opportunity"
+      ? "var(--accent)"
+      : finding.domain === "money"
+        ? "var(--off-track-text)"
+        : "var(--ink)";
+
+  const compactBody = (
+    <div className="flex items-start gap-3">
+      <div className="min-w-0 flex-1">
+        {finding.kicker ? <p className="kicker">{finding.kicker}</p> : null}
+        <p
+          className={`text-[16px] font-normal leading-5 tracking-[-0.02em] ${
+            finding.kicker ? "mt-1" : ""
+          }`}
+        >
+          {title}
+        </p>
+        {finding.actor ? (
+          <p className="mt-1.5 text-[12px] leading-4 text-[var(--ink-2)]">
+            {finding.actor.type === "person" && !linked ? (
+              <EntityLink type="person" id={finding.actor.id}>
+                {finding.actor.label}
+              </EntityLink>
+            ) : (
+              finding.actor.label
+            )}
+          </p>
+        ) : null}
+      </div>
+      {figure && tier >= 3 ? (
+        <p
+          className="figure shrink-0 !text-[16px] !leading-5"
+          style={{ color: figureColor }}
+        >
+          {figure}
+        </p>
+      ) : null}
+    </div>
+  );
+
   const claimSize =
     tier === 4
       ? "text-[17px] font-normal leading-5 tracking-[-0.02em]"
       : tier === 3
         ? "text-[15px] font-normal leading-5"
         : "text-[13px] font-normal leading-5";
-  const figure = finding.amount != null ? money(finding.amount) : null;
-  const chrome = tier >= 3;
 
-  const body = (
+  const fullBody = (
     <>
       {finding.kicker ? (
         <span className="mb-1 block font-mono text-[11px] font-normal uppercase tracking-[0.08em] text-[var(--ink-2)]">
@@ -41,14 +84,7 @@ export function FindingCard({
       {figure && tier >= 3 ? (
         <span
           className={`block ${tier === 4 ? "text-[20px] font-normal leading-6 tracking-[-0.03em]" : "text-[16px] font-normal leading-5 tracking-[-0.02em]"}`}
-          style={{
-            color:
-              finding.kind === "opportunity"
-                ? "var(--accent)"
-                : finding.domain === "money"
-                  ? "var(--off-track-text)"
-                  : "var(--ink)",
-          }}
+          style={{ color: figureColor }}
         >
           {figure}
         </span>
@@ -56,12 +92,12 @@ export function FindingCard({
       <span className={`mt-1 block ${claimSize} text-[var(--ink)]`}>
         {finding.headline.replace(/\.$/, "")}
       </span>
-      {compact || tier < 2 ? null : (
+      {tier < 2 ? null : (
         <span className="mt-1 block text-[13px] font-normal leading-5 text-[var(--ink-2)]">
           {finding.sentence}
         </span>
       )}
-      {finding.consequence && tier >= 2 && !compact ? (
+      {finding.consequence && tier >= 2 ? (
         <span className="mt-1.5 block text-[13px] leading-5 text-[var(--ink-2)]">
           {finding.consequence}
         </span>
@@ -85,10 +121,10 @@ export function FindingCard({
     </>
   );
 
+  const body = compact ? compactBody : fullBody;
+
   return (
-    <article
-      className={`px-4 py-4 ${chrome ? "" : ""}`}
-    >
+    <article className={compact ? "" : "px-4 py-4"}>
       {linked ? (
         <Link href={finding.href} className="block">
           {body}
@@ -119,6 +155,7 @@ export function FindingCard({
         <TriageBar
           finding={finding}
           copyText={exportFindingMarkdown(finding)}
+          compact={compact}
         />
       ) : null}
       {actions && !compact ? (
