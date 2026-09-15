@@ -1,44 +1,73 @@
+import { severityLabel, severityToRag } from "@/lib/metrics/labels";
+
 export function StatusGlyph({
   rag,
   size = 14,
+  showLabel = false,
+  label: labelOverride,
 }: {
   rag: string;
   size?: number;
+  showLabel?: boolean;
+  label?: string;
 }) {
+  const mapped = severityToRag(rag);
   const color =
-    rag === "Red"
+    mapped === "Red"
       ? "var(--off-track)"
-      : rag === "Amber"
+      : mapped === "Amber"
         ? "var(--watch)"
-        : rag === "Green"
+        : mapped === "Green"
           ? "var(--on-track)"
           : "var(--not-started)";
+  const label = labelOverride ?? (["Red", "Amber", "Green", "N/A"].includes(rag)
+    ? severityLabel(rag)
+    : rag);
 
-  if (rag === "Amber") {
-    return (
-      <svg width={size} height={size} viewBox="0 0 14 14" aria-label="Watch">
+  const glyph =
+    mapped === "Amber" ? (
+      <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden>
+        <polygon points="7,1.2 13,7 7,12.8 1,7" fill={color} />
+      </svg>
+    ) : mapped === "Red" ? (
+      <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden>
         <polygon points="7,1.5 12.5,12.5 1.5,12.5" fill={color} />
       </svg>
-    );
-  }
-  if (rag === "Red") {
-    return (
-      <svg width={size} height={size} viewBox="0 0 14 14" aria-label="Off track">
-        <rect x="2" y="2" width="10" height="10" rx="1.5" fill={color} />
+    ) : mapped === "Green" ? (
+      <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden>
+        <circle
+          cx="7"
+          cy="7"
+          r="5"
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+        />
+      </svg>
+    ) : (
+      <svg width={size} height={size} viewBox="0 0 14 14" aria-hidden>
+        <circle
+          cx="7"
+          cy="7"
+          r="5"
+          fill="none"
+          stroke={color}
+          strokeWidth="1.5"
+        />
       </svg>
     );
-  }
-  if (rag === "Green") {
+
+  if (!showLabel) {
     return (
-      <svg width={size} height={size} viewBox="0 0 14 14" aria-label="On track">
-        <circle cx="7" cy="7" r="5.5" fill={color} />
-      </svg>
+      <span className="inline-flex" title={label} aria-label={label}>
+        {glyph}
+      </span>
     );
   }
   return (
-    <svg width={size} height={size} viewBox="0 0 14 14" aria-label="Not started">
-      <circle cx="7" cy="7" r="5" fill="none" stroke={color} strokeWidth="1.5" />
-    </svg>
+    <span className="inline-flex items-center gap-1.5">
+      {glyph}
+      <span className="text-[12px] text-[var(--ink)]">{label}</span>
+    </span>
   );
 }
-

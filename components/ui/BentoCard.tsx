@@ -18,18 +18,13 @@ export function BentoCard({
         ? "border-[rgba(46,109,180,0.12)] bg-[var(--surface)]"
         : "border-[var(--tile-border)] bg-[var(--surface)]";
 
-  const labelClass =
-    tone === "accent"
-      ? "text-white/55"
-      : "text-[var(--accent)] opacity-70";
+  const labelClass = tone === "accent" ? "text-white/55" : "";
 
   return (
     <section
       className={`rounded-[16px] border p-4 md:p-[18px] ${toneClass} ${className}`}
     >
-      <div
-        className={`mb-3 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.14em] ${labelClass}`}
-      >
+      <div className={`kicker mb-3 ${labelClass}`}>
         {label}
       </div>
       {children}
@@ -49,15 +44,15 @@ export function MetricStat({
   return (
     <div>
       <div
-        className={`text-[36px] font-extrabold leading-none tracking-[-0.04em] ${
+        className={`text-[36px] font-normal leading-none tracking-[-0.04em] ${
           inverted ? "text-white" : "text-[var(--accent)]"
         }`}
       >
         {value}
       </div>
       <div
-        className={`mt-1 font-[family-name:var(--font-mono)] text-[9px] font-medium uppercase tracking-[0.1em] ${
-          inverted ? "text-white/55" : "text-black/45"
+        className={`kicker mt-1 ${
+          inverted ? "text-white/55" : ""
         }`}
       >
         {unit}

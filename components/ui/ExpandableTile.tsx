@@ -34,7 +34,7 @@ export function ExpandableTile({
         }`}
       >
         <span
-          className={`mt-[1px] text-[14px] font-bold leading-none transition-transform duration-200 ${
+          className={`mt-[1px] text-[14px] font-normal leading-none transition-transform duration-200 ${
             accent ? "text-white/90" : "text-[var(--accent)]"
           } ${open ? "rotate-90" : ""}`}
           aria-hidden

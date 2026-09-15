@@ -212,6 +212,19 @@ export interface SettingsMap {
   [key: string]: Date | number | string;
 }
 
+export type SheetIndex = {
+  /** Header name → 0-based column index on the sheet. */
+  columns: Record<string, number>;
+  /** Entity primary key → 1-based Excel row. */
+  rows: Record<string, number>;
+};
+
+export type SourceIndex = {
+  fileId: string;
+  fileModified: string;
+  sheets: Record<string, SheetIndex>;
+};
+
 export interface Dataset {
   projects: Project[];
   resources: Resource[];
@@ -226,7 +239,8 @@ export interface Dataset {
   snapshots: Snapshot[];
   clients: Client[];
   settings: SettingsMap;
-}
+  source: SourceIndex;
+};
 
 export interface DataIssue {
   table: string;

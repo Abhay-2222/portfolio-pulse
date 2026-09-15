@@ -1,0 +1,1352 @@
+{
+  "asOf": "2026-09-11",
+  "currency": "CAD",
+  "note": "Ground truth computed from Enterprise_Portfolio_Data.xlsx. Use for test assertions.",
+  "portfolio": {
+    "activeProjects": 17,
+    "totalProjects": 24,
+    "activeContractValue": 16200000.0,
+    "portfolioMarginPct": 0.31,
+    "targetMarginPctWeighted": 0.36,
+    "averageHealth": 74.12,
+    "rag": {
+      "red": 4,
+      "amber": 4,
+      "green": 9
+    },
+    "overdueAR": 789503.99,
+    "overdueARCount": 6,
+    "outstandingAR": 1937308.92,
+    "unbilledWIPGross": 2357241.83,
+    "overbilledWIP": -239727.42,
+    "unbilledWIPNet": 2117514.41,
+    "uninvoicedBillingMilestones": 445500.0,
+    "uninvoicedBillingMilestoneCount": 3,
+    "overdueMilestones": 4,
+    "criticalOpenRAID": 6,
+    "weightedOpenExposure": 1632400.0,
+    "pendingCRs": 8,
+    "pendingCRCostImpact": 402000.0,
+    "overallocated": 6,
+    "underUtilized": 23,
+    "benchHoursPerWeek": 720.0
+  },
+  "projects": {
+    "P-1001": {
+      "name": "Patient Portal Modernization",
+      "client": "Northgate Health Network",
+      "status": "Active",
+      "pm": "Aisha Tremblay",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 98,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 1.6,
+        "marginShortfall": 0.0
+      },
+      "contract": 1135000.0,
+      "budget": 748500.0,
+      "actualCost": 569689.28,
+      "eac": 654815.26,
+      "etc": 85125.98,
+      "vac": 93684.74,
+      "cpi": 1.14,
+      "spi": 1.01,
+      "pctComplete": 0.87,
+      "burnPct": 0.76,
+      "slipDays": 4,
+      "forecastMarginPct": 0.42,
+      "targetMarginPct": 0.34,
+      "invoiced": 660000.0,
+      "unbilledWIP": 327450.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 42100.0
+    },
+    "P-1002": {
+      "name": "Claims Automation Engine",
+      "client": "Crestline Insurance",
+      "status": "Active",
+      "pm": "Liam Roy",
+      "overallRAG": "Red",
+      "legs": {
+        "cost": "Amber",
+        "schedule": "Amber",
+        "margin": "Red"
+      },
+      "health": 43,
+      "healthContributors": {
+        "costOverburn": 21.54,
+        "scheduleSlip": 6.8,
+        "marginShortfall": 28.74
+      },
+      "contract": 770000.0,
+      "budget": 536100.0,
+      "actualCost": 382554.58,
+      "eac": 671148.39,
+      "etc": 288593.81,
+      "vac": -135048.39,
+      "cpi": 0.8,
+      "spi": 0.8,
+      "pctComplete": 0.57,
+      "burnPct": 0.71,
+      "slipDays": 17,
+      "forecastMarginPct": 0.13,
+      "targetMarginPct": 0.32,
+      "invoiced": 205500.0,
+      "unbilledWIP": 233400.0,
+      "uninvoicedMilestones": 205500.0,
+      "contingencyRemaining": 52700.0
+    },
+    "P-1003": {
+      "name": "Enterprise Data Lakehouse",
+      "client": "Maple Ridge Financial",
+      "status": "Active",
+      "pm": "Mei Fraser",
+      "overallRAG": "Amber",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Amber",
+        "margin": "Amber"
+      },
+      "health": 61,
+      "healthContributors": {
+        "costOverburn": 5.84,
+        "scheduleSlip": 16.4,
+        "marginShortfall": 16.89
+      },
+      "contract": 1345000.0,
+      "budget": 879600.0,
+      "actualCost": 614808.15,
+      "eac": 931527.5,
+      "etc": 316719.35,
+      "vac": -51927.5,
+      "cpi": 0.94,
+      "spi": 0.8,
+      "pctComplete": 0.66,
+      "burnPct": 0.7,
+      "slipDays": 41,
+      "forecastMarginPct": 0.31,
+      "targetMarginPct": 0.42,
+      "invoiced": 1061258.45,
+      "unbilledWIP": -173558.45,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 86500.0
+    },
+    "P-1004": {
+      "name": "Cloud Migration Wave 2",
+      "client": "Harbourview Logistics",
+      "status": "Active",
+      "pm": "Noah Rahimi",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 98,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 2.4,
+        "marginShortfall": 0.0
+      },
+      "contract": 1155000.0,
+      "budget": 738500.0,
+      "actualCost": 440837.72,
+      "eac": 722684.79,
+      "etc": 281847.07,
+      "vac": 15815.21,
+      "cpi": 1.02,
+      "spi": 1.0,
+      "pctComplete": 0.61,
+      "burnPct": 0.6,
+      "slipDays": 6,
+      "forecastMarginPct": 0.37,
+      "targetMarginPct": 0.36,
+      "invoiced": 346500.0,
+      "unbilledWIP": 358050.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 37500.0
+    },
+    "P-1005": {
+      "name": "Fraud Detection ML Platform",
+      "client": "Ironbridge Capital",
+      "status": "Active",
+      "pm": "Fatima Cohen",
+      "overallRAG": "Red",
+      "legs": {
+        "cost": "Amber",
+        "schedule": "Red",
+        "margin": "Amber"
+      },
+      "health": 22,
+      "healthContributors": {
+        "costOverburn": 18.3,
+        "scheduleSlip": 26.4,
+        "marginShortfall": 33.15
+      },
+      "contract": 860000.0,
+      "budget": 554200.0,
+      "actualCost": 289303.7,
+      "eac": 723259.25,
+      "etc": 433955.55,
+      "vac": -169059.25,
+      "cpi": 0.77,
+      "spi": 0.75,
+      "pctComplete": 0.4,
+      "burnPct": 0.52,
+      "slipDays": 66,
+      "forecastMarginPct": 0.16,
+      "targetMarginPct": 0.38,
+      "invoiced": 222000.0,
+      "unbilledWIP": 122000.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 36400.0
+    },
+    "P-1006": {
+      "name": "Omnichannel Commerce Replatform",
+      "client": "Aurora Retail Group",
+      "status": "Active",
+      "pm": "Olivia Silva",
+      "overallRAG": "Amber",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Amber"
+      },
+      "health": 75,
+      "healthContributors": {
+        "costOverburn": 10.12,
+        "scheduleSlip": 4.0,
+        "marginShortfall": 10.55
+      },
+      "contract": 980000.0,
+      "budget": 630300.0,
+      "actualCost": 622397.49,
+      "eac": 676519.01,
+      "etc": 54121.52,
+      "vac": -46219.01,
+      "cpi": 0.93,
+      "spi": 0.96,
+      "pctComplete": 0.92,
+      "burnPct": 0.99,
+      "slipDays": 10,
+      "forecastMarginPct": 0.31,
+      "targetMarginPct": 0.38,
+      "invoiced": 752000.0,
+      "unbilledWIP": 149600.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 45600.0
+    },
+    "P-1007": {
+      "name": "Student Information System Upgrade",
+      "client": "Pinecrest University",
+      "status": "Active",
+      "pm": "Ethan Park",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 99,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 1.2,
+        "marginShortfall": 0.0
+      },
+      "contract": 970000.0,
+      "budget": 639400.0,
+      "actualCost": 249953.93,
+      "eac": 581288.21,
+      "etc": 331334.28,
+      "vac": 58111.79,
+      "cpi": 1.1,
+      "spi": 0.96,
+      "pctComplete": 0.43,
+      "burnPct": 0.39,
+      "slipDays": 3,
+      "forecastMarginPct": 0.4,
+      "targetMarginPct": 0.34,
+      "invoiced": 291000.0,
+      "unbilledWIP": 126100.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 34800.0
+    },
+    "P-1008": {
+      "name": "Network Operations Centre Refresh",
+      "client": "Summit Telecom",
+      "status": "Active",
+      "pm": "Arjun Baptiste",
+      "overallRAG": "Amber",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Amber",
+        "margin": "Amber"
+      },
+      "health": 71,
+      "healthContributors": {
+        "costOverburn": 2.36,
+        "scheduleSlip": 6.8,
+        "marginShortfall": 20.14
+      },
+      "contract": 765000.0,
+      "budget": 536500.0,
+      "actualCost": 464449.86,
+      "eac": 546411.6,
+      "etc": 81961.74,
+      "vac": -9911.6,
+      "cpi": 0.98,
+      "spi": 0.97,
+      "pctComplete": 0.85,
+      "burnPct": 0.87,
+      "slipDays": 17,
+      "forecastMarginPct": 0.29,
+      "targetMarginPct": 0.42,
+      "invoiced": 716418.97,
+      "unbilledWIP": -66168.97,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 35700.0
+    },
+    "P-1009": {
+      "name": "Smart Factory IoT Pilot",
+      "client": "Granite Manufacturing",
+      "status": "Active",
+      "pm": "Mei Fraser",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 99,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 1.2,
+        "marginShortfall": 0.0
+      },
+      "contract": 535000.0,
+      "budget": 342700.0,
+      "actualCost": 160755.53,
+      "eac": 321511.06,
+      "etc": 160755.53,
+      "vac": 21188.94,
+      "cpi": 1.07,
+      "spi": 0.85,
+      "pctComplete": 0.5,
+      "burnPct": 0.47,
+      "slipDays": 3,
+      "forecastMarginPct": 0.4,
+      "targetMarginPct": 0.36,
+      "invoiced": 160500.0,
+      "unbilledWIP": 107000.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 19600.0
+    },
+    "P-1010": {
+      "name": "311 Citizen Services App",
+      "client": "Bluewater Municipal Services",
+      "status": "Active",
+      "pm": "Fatima Cohen",
+      "overallRAG": "Red",
+      "legs": {
+        "cost": "Amber",
+        "schedule": "Red",
+        "margin": "Amber"
+      },
+      "health": 30,
+      "healthContributors": {
+        "costOverburn": 26.08,
+        "scheduleSlip": 19.6,
+        "marginShortfall": 24.16
+      },
+      "contract": 765000.0,
+      "budget": 497000.0,
+      "actualCost": 513842.3,
+      "eac": 597491.05,
+      "etc": 83648.75,
+      "vac": -100491.05,
+      "cpi": 0.83,
+      "spi": 0.86,
+      "pctComplete": 0.86,
+      "burnPct": 1.03,
+      "slipDays": 49,
+      "forecastMarginPct": 0.22,
+      "targetMarginPct": 0.38,
+      "invoiced": 441000.0,
+      "unbilledWIP": 216900.0,
+      "uninvoicedMilestones": 147000.0,
+      "contingencyRemaining": 35300.0
+    },
+    "P-1011": {
+      "name": "Clinical Trials Data Hub",
+      "client": "Evergreen Pharma",
+      "status": "Active",
+      "pm": "Noah Rahimi",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 100,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 0.0,
+        "marginShortfall": 0.0
+      },
+      "contract": 1050000.0,
+      "budget": 668700.0,
+      "actualCost": 248297.41,
+      "eac": 591184.31,
+      "etc": 342886.9,
+      "vac": 77515.69,
+      "cpi": 1.13,
+      "spi": 0.89,
+      "pctComplete": 0.42,
+      "burnPct": 0.37,
+      "slipDays": 0,
+      "forecastMarginPct": 0.44,
+      "targetMarginPct": 0.42,
+      "invoiced": 415431.38,
+      "unbilledWIP": 25568.62,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 35300.0
+    },
+    "P-1012": {
+      "name": "Grid Analytics Dashboard",
+      "client": "Lakeshore Energy",
+      "status": "Active",
+      "pm": "Arjun Baptiste",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 100,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 0.0,
+        "marginShortfall": 0.0
+      },
+      "contract": 510000.0,
+      "budget": 346500.0,
+      "actualCost": 142260.82,
+      "eac": 323320.05,
+      "etc": 181059.23,
+      "vac": 23179.95,
+      "cpi": 1.07,
+      "spi": 0.86,
+      "pctComplete": 0.44,
+      "burnPct": 0.41,
+      "slipDays": 0,
+      "forecastMarginPct": 0.37,
+      "targetMarginPct": 0.32,
+      "invoiced": 153000.0,
+      "unbilledWIP": 71400.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 19800.0
+    },
+    "P-1013": {
+      "name": "Core Banking API Layer",
+      "client": "Maple Ridge Financial",
+      "status": "Active",
+      "pm": "Liam Roy",
+      "overallRAG": "Amber",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Amber",
+        "margin": "Amber"
+      },
+      "health": 74,
+      "healthContributors": {
+        "costOverburn": 9.0,
+        "scheduleSlip": 6.8,
+        "marginShortfall": 10.01
+      },
+      "contract": 1510000.0,
+      "budget": 1022500.0,
+      "actualCost": 899800.48,
+      "eac": 1097317.66,
+      "etc": 197517.18,
+      "vac": -74817.66,
+      "cpi": 0.93,
+      "spi": 0.92,
+      "pctComplete": 0.82,
+      "burnPct": 0.88,
+      "slipDays": 17,
+      "forecastMarginPct": 0.27,
+      "targetMarginPct": 0.34,
+      "invoiced": 849000.0,
+      "unbilledWIP": 389200.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 100100.0
+    },
+    "P-1014": {
+      "name": "Managed Cloud Operations",
+      "client": "Harbourview Logistics",
+      "status": "Active",
+      "pm": "Ethan Park",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 98,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 1.6,
+        "marginShortfall": 0.0
+      },
+      "contract": 1450000.0,
+      "budget": 943900.0,
+      "actualCost": 726209.58,
+      "eac": 896555.04,
+      "etc": 170345.46,
+      "vac": 47344.96,
+      "cpi": 1.05,
+      "spi": 1.02,
+      "pctComplete": 0.81,
+      "burnPct": 0.77,
+      "slipDays": 4,
+      "forecastMarginPct": 0.38,
+      "targetMarginPct": 0.35,
+      "invoiced": 1127777.84,
+      "unbilledWIP": 46722.16,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 49300.0
+    },
+    "P-1015": {
+      "name": "Policy Admin Consolidation",
+      "client": "Crestline Insurance",
+      "status": "Active",
+      "pm": "Olivia Silva",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 96,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 4.0,
+        "marginShortfall": 0.31
+      },
+      "contract": 1465000.0,
+      "budget": 1077800.0,
+      "actualCost": 339750.83,
+      "eac": 999267.15,
+      "etc": 659516.32,
+      "vac": 78532.85,
+      "cpi": 1.08,
+      "spi": 0.89,
+      "pctComplete": 0.34,
+      "burnPct": 0.32,
+      "slipDays": 10,
+      "forecastMarginPct": 0.32,
+      "targetMarginPct": 0.32,
+      "invoiced": 394500.0,
+      "unbilledWIP": 103600.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 66200.0
+    },
+    "P-1016": {
+      "name": "Warehouse Robotics Integration",
+      "client": "Harbourview Logistics",
+      "status": "Active",
+      "pm": "Aisha Tremblay",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 96,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 1.2,
+        "marginShortfall": 2.69
+      },
+      "contract": 470000.0,
+      "budget": 324700.0,
+      "actualCost": 168612.03,
+      "eac": 281020.05,
+      "etc": 112408.02,
+      "vac": 43679.95,
+      "cpi": 1.16,
+      "spi": 0.88,
+      "pctComplete": 0.6,
+      "burnPct": 0.52,
+      "slipDays": 3,
+      "forecastMarginPct": 0.4,
+      "targetMarginPct": 0.42,
+      "invoiced": 248248.95,
+      "unbilledWIP": 33751.05,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 16400.0
+    },
+    "P-1017": {
+      "name": "Loyalty Program Relaunch",
+      "client": "Aurora Retail Group",
+      "status": "Active",
+      "pm": "Mei Fraser",
+      "overallRAG": "Red",
+      "legs": {
+        "cost": "Red",
+        "schedule": "Red",
+        "margin": "Red"
+      },
+      "health": 0,
+      "healthContributors": {
+        "costOverburn": 38.13,
+        "scheduleSlip": 22.0,
+        "marginShortfall": 66.06
+      },
+      "contract": 465000.0,
+      "budget": 389000.0,
+      "actualCost": 371195.43,
+      "eac": 530279.19,
+      "etc": 159083.76,
+      "vac": -141279.19,
+      "cpi": 0.73,
+      "spi": 0.76,
+      "pctComplete": 0.7,
+      "burnPct": 0.95,
+      "slipDays": 55,
+      "forecastMarginPct": -0.14,
+      "targetMarginPct": 0.3,
+      "invoiced": 279000.0,
+      "unbilledWIP": 46500.0,
+      "uninvoicedMilestones": 93000.0,
+      "contingencyRemaining": 25400.0
+    },
+    "P-1018": {
+      "name": "Cybersecurity Posture Assessment",
+      "client": "Summit Telecom",
+      "status": "Completed",
+      "pm": "Noah Rahimi",
+      "overallRAG": "Green",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Green"
+      },
+      "health": 100,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 0.0,
+        "marginShortfall": 0.0
+      },
+      "contract": 620000.0,
+      "budget": 421900.0,
+      "actualCost": 386550.33,
+      "eac": 386550.33,
+      "etc": 0.0,
+      "vac": 35349.67,
+      "cpi": 1.09,
+      "spi": 1.0,
+      "pctComplete": 1.0,
+      "burnPct": 0.92,
+      "slipDays": 0,
+      "forecastMarginPct": 0.38,
+      "targetMarginPct": 0.32,
+      "invoiced": 620000.0,
+      "unbilledWIP": 0.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 21800.0
+    },
+    "P-1019": {
+      "name": "HR Self-Service Portal",
+      "client": "Pinecrest University",
+      "status": "Completed",
+      "pm": "Arjun Baptiste",
+      "overallRAG": "Amber",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Amber",
+        "margin": "Green"
+      },
+      "health": 67,
+      "healthContributors": {
+        "costOverburn": 8.76,
+        "scheduleSlip": 16.8,
+        "marginShortfall": 7.45
+      },
+      "contract": 1045000.0,
+      "budget": 661200.0,
+      "actualCost": 699825.98,
+      "eac": 699825.98,
+      "etc": 0.0,
+      "vac": -38625.98,
+      "cpi": 0.94,
+      "spi": 1.0,
+      "pctComplete": 1.0,
+      "burnPct": 1.06,
+      "slipDays": 42,
+      "forecastMarginPct": 0.33,
+      "targetMarginPct": 0.38,
+      "invoiced": 985000.0,
+      "unbilledWIP": 60000.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 44900.0
+    },
+    "P-1020": {
+      "name": "Demand Forecasting Model",
+      "client": "Granite Manufacturing",
+      "status": "Completed",
+      "pm": "Noah Rahimi",
+      "overallRAG": "Amber",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Green",
+        "margin": "Amber"
+      },
+      "health": 90,
+      "healthContributors": {
+        "costOverburn": 0.0,
+        "scheduleSlip": 1.2,
+        "marginShortfall": 8.73
+      },
+      "contract": 590000.0,
+      "budget": 412900.0,
+      "actualCost": 376556.9,
+      "eac": 376556.9,
+      "etc": 0.0,
+      "vac": 36343.1,
+      "cpi": 1.1,
+      "spi": 1.0,
+      "pctComplete": 1.0,
+      "burnPct": 0.91,
+      "slipDays": 3,
+      "forecastMarginPct": 0.36,
+      "targetMarginPct": 0.42,
+      "invoiced": 575520.34,
+      "unbilledWIP": 14479.66,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 24300.0
+    },
+    "P-1021": {
+      "name": "Field Service Mobile App",
+      "client": "Lakeshore Energy",
+      "status": "On Hold",
+      "pm": "Arjun Baptiste",
+      "overallRAG": "Red",
+      "legs": {
+        "cost": "Green",
+        "schedule": "Red",
+        "margin": "Amber"
+      },
+      "health": 49,
+      "healthContributors": {
+        "costOverburn": 6.09,
+        "scheduleSlip": 36.0,
+        "marginShortfall": 8.91
+      },
+      "contract": 625000.0,
+      "budget": 398600.0,
+      "actualCost": 183595.87,
+      "eac": 437133.02,
+      "etc": 253537.15,
+      "vac": -38533.02,
+      "cpi": 0.91,
+      "spi": 0.58,
+      "pctComplete": 0.42,
+      "burnPct": 0.46,
+      "slipDays": 90,
+      "forecastMarginPct": 0.3,
+      "targetMarginPct": 0.36,
+      "invoiced": 187500.0,
+      "unbilledWIP": 75000.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 30700.0
+    },
+    "P-1022": {
+      "name": "Regulatory Reporting Automation",
+      "client": "Ironbridge Capital",
+      "status": "Planned",
+      "pm": "Aisha Tremblay",
+      "overallRAG": "N/A",
+      "legs": {
+        "cost": "N/A",
+        "schedule": "N/A",
+        "margin": "N/A"
+      },
+      "health": null,
+      "healthContributors": null,
+      "contract": 515000.0,
+      "budget": 340500.0,
+      "actualCost": 0.0,
+      "eac": 340500.0,
+      "etc": 340500.0,
+      "vac": 0.0,
+      "cpi": 1.0,
+      "spi": 1.0,
+      "pctComplete": 0.0,
+      "burnPct": 0.0,
+      "slipDays": 0,
+      "forecastMarginPct": 0.34,
+      "targetMarginPct": 0.34,
+      "invoiced": 0.0,
+      "unbilledWIP": 0.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 26200.0
+    },
+    "P-1023": {
+      "name": "GenAI Knowledge Assistant",
+      "client": "Evergreen Pharma",
+      "status": "Planned",
+      "pm": "Liam Roy",
+      "overallRAG": "N/A",
+      "legs": {
+        "cost": "N/A",
+        "schedule": "N/A",
+        "margin": "N/A"
+      },
+      "health": null,
+      "healthContributors": null,
+      "contract": 520000.0,
+      "budget": 340000.0,
+      "actualCost": 0.0,
+      "eac": 340000.0,
+      "etc": 340000.0,
+      "vac": 0.0,
+      "cpi": 1.0,
+      "spi": 1.0,
+      "pctComplete": 0.0,
+      "burnPct": 0.0,
+      "slipDays": 0,
+      "forecastMarginPct": 0.35,
+      "targetMarginPct": 0.42,
+      "invoiced": 0.0,
+      "unbilledWIP": 0.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 27100.0
+    },
+    "P-1024": {
+      "name": "Municipal Asset Management",
+      "client": "Bluewater Municipal Services",
+      "status": "Planned",
+      "pm": "Mei Fraser",
+      "overallRAG": "N/A",
+      "legs": {
+        "cost": "N/A",
+        "schedule": "N/A",
+        "margin": "N/A"
+      },
+      "health": null,
+      "healthContributors": null,
+      "contract": 1090000.0,
+      "budget": 698500.0,
+      "actualCost": 0.0,
+      "eac": 698500.0,
+      "etc": 698500.0,
+      "vac": 0.0,
+      "cpi": 1.0,
+      "spi": 1.0,
+      "pctComplete": 0.0,
+      "burnPct": 0.0,
+      "slipDays": 0,
+      "forecastMarginPct": 0.36,
+      "targetMarginPct": 0.36,
+      "invoiced": 0.0,
+      "unbilledWIP": 0.0,
+      "uninvoicedMilestones": 0.0,
+      "contingencyRemaining": 51600.0
+    }
+  },
+  "people": {
+    "Mei Fraser": {
+      "role": "Project Manager",
+      "allocationPct": 1.25,
+      "status": "Overallocated",
+      "skill": "Stakeholder mgmt",
+      "costRate": 74.8,
+      "billableRatioYTD": 0.77,
+      "activeAssignments": 3
+    },
+    "Noah Rahimi": {
+      "role": "Project Manager",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Stakeholder mgmt",
+      "costRate": 88.0,
+      "billableRatioYTD": 0.3,
+      "activeAssignments": 2
+    },
+    "Chloe Reyes": {
+      "role": "Solution Architect",
+      "allocationPct": 0.25,
+      "status": "Under-utilized",
+      "skill": "Salesforce",
+      "costRate": 129.92,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Mateo Bianchi": {
+      "role": "Solution Architect",
+      "allocationPct": 0.25,
+      "status": "Under-utilized",
+      "skill": "Salesforce",
+      "costRate": 129.92,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Hana Clarke": {
+      "role": "Solution Architect",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Integration",
+      "costRate": 120.96,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    },
+    "Lucas Okoro": {
+      "role": "Solution Architect",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Integration",
+      "costRate": 104.16,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Zara Vasquez": {
+      "role": "Business Analyst",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Process mapping",
+      "costRate": 78.88,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Owen Bennett": {
+      "role": "Business Analyst",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Requirements",
+      "costRate": 73.44,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Amara Martin": {
+      "role": "Business Analyst",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Requirements",
+      "costRate": 63.24,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Diego Costa": {
+      "role": "UX Designer",
+      "allocationPct": 0.0,
+      "status": "Under-utilized",
+      "skill": "Accessibility",
+      "costRate": 85.84,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 0
+    },
+    "Nadia Aziz": {
+      "role": "UX Designer",
+      "allocationPct": 0.0,
+      "status": "Under-utilized",
+      "skill": "Research",
+      "costRate": 68.82,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 0
+    },
+    "Samuel Mehta": {
+      "role": "UX Designer",
+      "allocationPct": 0.0,
+      "status": "Under-utilized",
+      "skill": "Research",
+      "costRate": 62.9,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 0
+    },
+    "Isabel Gill": {
+      "role": "Senior Developer",
+      "allocationPct": 1.25,
+      "status": "Overallocated",
+      "skill": "Java",
+      "costRate": 99.36,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    },
+    "Omar Bose": {
+      "role": "Senior Developer",
+      "allocationPct": 1.25,
+      "status": "Overallocated",
+      "skill": "React",
+      "costRate": 99.36,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    },
+    "Grace Chowdhury": {
+      "role": "Senior Developer",
+      "allocationPct": 1.5,
+      "status": "Overallocated",
+      "skill": ".NET",
+      "costRate": 85.56,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    },
+    "Elijah Adeyemi": {
+      "role": "Developer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Node.js",
+      "costRate": 59.52,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Anika Farouk": {
+      "role": "Developer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Python",
+      "costRate": 54.4,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Theo Siddiqui": {
+      "role": "Developer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "React",
+      "costRate": 54.4,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Leila Nguyen": {
+      "role": "Developer",
+      "allocationPct": 1.25,
+      "status": "Overallocated",
+      "skill": "React",
+      "costRate": 64.0,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    },
+    "Andre Fontaine": {
+      "role": "Developer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "React",
+      "costRate": 64.0,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Victor Chen": {
+      "role": "QA Analyst",
+      "allocationPct": 1.5,
+      "status": "Overallocated",
+      "skill": "Selenium",
+      "costRate": 81.2,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 4
+    },
+    "Simran Patel": {
+      "role": "QA Analyst",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Automation",
+      "costRate": 70.0,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Hugo Ahmed": {
+      "role": "QA Analyst",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Selenium",
+      "costRate": 52.08,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Noor Sato": {
+      "role": "Cloud Engineer",
+      "allocationPct": 0.0,
+      "status": "Under-utilized",
+      "skill": "Azure",
+      "costRate": 126.9,
+      "billableRatioYTD": 0.0,
+      "activeAssignments": 0
+    },
+    "Adrian Kapoor": {
+      "role": "DevOps Engineer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "CI/CD",
+      "costRate": 99.76,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Priyanka Tanaka": {
+      "role": "DevOps Engineer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "CI/CD",
+      "costRate": 79.98,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Jonah Lee": {
+      "role": "DevOps Engineer",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Kubernetes",
+      "costRate": 86.0,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 1
+    },
+    "Mariam Brooks": {
+      "role": "Change Manager",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Training",
+      "costRate": 83.52,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    },
+    "Callum Dubois": {
+      "role": "Change Manager",
+      "allocationPct": 0.5,
+      "status": "Under-utilized",
+      "skill": "Comms",
+      "costRate": 77.76,
+      "billableRatioYTD": 1.0,
+      "activeAssignments": 2
+    }
+  },
+  "invoices": {
+    "INV-00049": {
+      "project": "P-1017",
+      "client": "Aurora Retail Group",
+      "amount": 93000.0,
+      "status": "Overdue",
+      "daysOverdue": 95,
+      "aging": "60+"
+    },
+    "INV-00067": {
+      "project": "P-1014",
+      "client": "Harbourview Logistics",
+      "amount": 80555.56,
+      "status": "Overdue",
+      "daysOverdue": 53,
+      "aging": "31-60"
+    },
+    "INV-00068": {
+      "project": "P-1016",
+      "client": "Harbourview Logistics",
+      "amount": 43539.34,
+      "status": "Overdue",
+      "daysOverdue": 53,
+      "aging": "31-60"
+    },
+    "INV-00071": {
+      "project": "P-1006",
+      "client": "Aurora Retail Group",
+      "amount": 282000.0,
+      "status": "Overdue",
+      "daysOverdue": 24,
+      "aging": "1-30"
+    },
+    "INV-00081": {
+      "project": "P-1007",
+      "client": "Pinecrest University",
+      "amount": 194000.0,
+      "status": "Overdue",
+      "daysOverdue": 3,
+      "aging": "1-30"
+    },
+    "INV-00082": {
+      "project": "P-1010",
+      "client": "Bluewater Municipal Services",
+      "amount": 220500.0,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00086": {
+      "project": "P-1003",
+      "client": "Maple Ridge Financial",
+      "amount": 96409.09,
+      "status": "Overdue",
+      "daysOverdue": 7,
+      "aging": "1-30"
+    },
+    "INV-00088": {
+      "project": "P-1011",
+      "client": "Evergreen Pharma",
+      "amount": 79969.15,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00089": {
+      "project": "P-1014",
+      "client": "Harbourview Logistics",
+      "amount": 80555.56,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00090": {
+      "project": "P-1016",
+      "client": "Harbourview Logistics",
+      "amount": 52100.79,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00091": {
+      "project": "P-1017",
+      "client": "Aurora Retail Group",
+      "amount": 139500.0,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00092": {
+      "project": "P-1006",
+      "client": "Aurora Retail Group",
+      "amount": 188000.0,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00093": {
+      "project": "P-1003",
+      "client": "Maple Ridge Financial",
+      "amount": 89764.58,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00094": {
+      "project": "P-1008",
+      "client": "Summit Telecom",
+      "amount": 76883.12,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00095": {
+      "project": "P-1011",
+      "client": "Evergreen Pharma",
+      "amount": 72403.18,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00096": {
+      "project": "P-1014",
+      "client": "Harbourview Logistics",
+      "amount": 80555.56,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    },
+    "INV-00097": {
+      "project": "P-1016",
+      "client": "Harbourview Logistics",
+      "amount": 67572.99,
+      "status": "Outstanding",
+      "daysOverdue": 0,
+      "aging": "Current"
+    }
+  },
+  "expectedFindings": {
+    "money.milestone_passed_unbilled": [
+      {
+        "milestone": "M-0008",
+        "project": "P-1002",
+        "amount": 205500.0
+      },
+      {
+        "milestone": "M-0049",
+        "project": "P-1010",
+        "amount": 147000.0
+      },
+      {
+        "milestone": "M-0084",
+        "project": "P-1017",
+        "amount": 93000.0
+      }
+    ],
+    "money.overbilled_wip": [
+      {
+        "project": "P-1003",
+        "amount": -173558.45
+      },
+      {
+        "project": "P-1008",
+        "amount": -66168.97
+      }
+    ],
+    "risk.critical_past_target": [
+      {
+        "raid": "R-0038",
+        "project": "P-1017",
+        "exposure": 59200.0,
+        "owner": "Mei Fraser"
+      },
+      {
+        "raid": "R-0043",
+        "project": "P-1009",
+        "exposure": 40000.0,
+        "owner": "Grace Chowdhury"
+      },
+      {
+        "raid": "R-0047",
+        "project": "P-1014",
+        "exposure": 40000.0,
+        "owner": "Jonah Lee"
+      }
+    ],
+    "decision.cr_stalled": [
+      {
+        "cr": "CR-003",
+        "project": "P-1002",
+        "days": 53,
+        "costImpact": 60000.0
+      },
+      {
+        "cr": "CR-006",
+        "project": "P-1004",
+        "days": 81,
+        "costImpact": 45000.0
+      },
+      {
+        "cr": "CR-008",
+        "project": "P-1005",
+        "days": 67,
+        "costImpact": 80000.0
+      }
+    ],
+    "people.idle_specialist": [
+      {
+        "name": "Noor Sato",
+        "skill": "Azure",
+        "weeklyCost": 5076.0
+      }
+    ],
+    "delivery.estimate_rebaselined": [
+      "P-1002",
+      "P-1003",
+      "P-1005",
+      "P-1006",
+      "P-1010",
+      "P-1013",
+      "P-1015",
+      "P-1017",
+      "P-1019"
+    ]
+  }
+}

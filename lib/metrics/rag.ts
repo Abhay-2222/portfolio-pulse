@@ -7,6 +7,18 @@ export function worstRAG(...values: RAG[]): RAG {
   return "N/A";
 }
 
+export function worstLegLabel(m: {
+  OverallRAG: string;
+  MarginRAG: string;
+  CostRAG: string;
+  ScheduleRAG: string;
+}): string {
+  if (m.OverallRAG === m.MarginRAG) return "margin";
+  if (m.OverallRAG === m.CostRAG) return "cost";
+  if (m.OverallRAG === m.ScheduleRAG) return "schedule";
+  return "none";
+}
+
 export function costRAG(
   status: string,
   burnPct: number,

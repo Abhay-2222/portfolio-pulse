@@ -4,16 +4,43 @@ import {
   TABLE_HEADERS,
   type TableName,
 } from "@/lib/data/schema";
+import { emptySource } from "@/lib/ledger/cells";
 import type {
   Dataset,
   DataIssue,
   ParseResult,
   SettingsMap,
+  SheetIndex,
+  SourceIndex,
 } from "@/lib/data/types";
+
+const ENTITY_KEY: Record<Exclude<TableName, "Settings">, string> = {
+  Projects: "ProjectID",
+  Resources: "EmployeeID",
+  Allocations: "AllocationID",
+  Estimates: "EstimateLineID",
+  Budget: "BudgetLineID",
+  Actuals: "ActualID",
+  Milestones: "MilestoneID",
+  Invoices: "InvoiceID",
+  RAID: "RAIDID",
+  ChangeRequests: "CRID",
+  Snapshots: "ProjectID",
+  Clients: "ClientID",
+};
+
+function snapshotKey(row: Record<string, unknown>): string {
+  const date = row.SnapshotDate;
+  const iso =
+    date instanceof Date && !Number.isNaN(date.getTime())
+      ? date.toISOString().slice(0, 10)
+      : String(date ?? "");
+  return `${iso}|${String(row.ProjectID ?? "")}`;
+}
 
 const INPUT_TABLES = Object.keys(ROW_SCHEMAS) as Exclude<TableName, "Settings">[];
 
-type DatasetTableKey = Exclude<keyof Dataset, "settings">;
+type DatasetTableKey = Exclude<keyof Dataset, "settings" | "source">;
 
 function blankToNull(row: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
@@ -47,23 +74,25 @@ function excelSerialToDate(serial: number): Date {
 }
 
 function parseSettings(
-  rows: Record<string, unknown>[],
+  rows: { excelRow: number; values: Record<string, unknown> }[],
   issues: DataIssue[],
+  sheet: SheetIndex,
 ): SettingsMap {
   const map: Record<string, unknown> = {};
-  rows.forEach((row, i) => {
-    const key = row.Setting;
-    const value = row.Value === "" ? null : row.Value;
+  rows.forEach((row) => {
+    const key = row.values.Setting;
+    const value = row.values.Value === "" ? null : row.values.Value;
     if (typeof key !== "string" || key.trim() === "") {
       issues.push({
         table: "Settings",
-        rowNumber: i + 2,
+        rowNumber: row.excelRow,
         column: "Setting",
         message: "Setting key is required",
       });
       return;
     }
     map[key] = value;
+    sheet.rows[key] = row.excelRow;
   });
 
   const dateKeys = ["AsOfDate", "ActualsCutoff"] as const;
@@ -140,7 +169,11 @@ function sheetToRows(
   issues: DataIssue[],
   /** When set, only these columns are kept (extra calculated columns ignored). */
   pickColumns?: readonly string[],
-): { headers: string[]; rows: Record<string, unknown>[] } | null {
+): {
+  headers: string[];
+  columns: Record<string, number>;
+  rows: { excelRow: number; values: Record<string, unknown> }[];
+} | null {
   const sheet = wb.Sheets[name];
   if (!sheet) {
     issues.push({
@@ -169,8 +202,14 @@ function sheetToRows(
     return null;
   }
   const headers = (matrix[0] ?? []).map((h) => String(h ?? ""));
+  const columns: Record<string, number> = {};
+  headers.forEach((h, idx) => {
+    if (!h) return;
+    if (pickColumns && !pickColumns.includes(h)) return;
+    columns[h] = idx;
+  });
   const keep = pickColumns ? new Set(pickColumns) : null;
-  const rows: Record<string, unknown>[] = [];
+  const rows: { excelRow: number; values: Record<string, unknown> }[] = [];
   for (let i = 1; i < matrix.length; i++) {
     const line = matrix[i];
     if (!line || line.every((c) => c === null || c === "")) continue;
@@ -180,9 +219,9 @@ function sheetToRows(
       if (keep && !keep.has(h)) return;
       obj[h] = line[idx] ?? null;
     });
-    rows.push(blankToNull(obj));
+    rows.push({ excelRow: i + 1, values: blankToNull(obj) });
   }
-  return { headers, rows };
+  return { headers, columns, rows };
 }
 
 /** Fallback defaults aligned with the real Enterprise_Portfolio_Data Settings sheet. */
@@ -215,6 +254,7 @@ export function parseWorkbook(
   buffer: ArrayBuffer | Buffer,
   version: string,
   fetchedAt: Date = new Date(),
+  meta?: { fileId?: string; fileModified?: string },
 ): ParseResult {
   const issues: DataIssue[] = [];
   const wb = XLSX.read(buffer, {
@@ -223,6 +263,11 @@ export function parseWorkbook(
     cellNF: false,
     cellText: false,
   });
+
+  const source: SourceIndex = emptySource(
+    meta?.fileId ?? "workbook",
+    meta?.fileModified ?? fetchedAt.toISOString(),
+  );
 
   const dataset: Dataset = {
     projects: [],
@@ -238,6 +283,7 @@ export function parseWorkbook(
     snapshots: [],
     clients: [],
     settings: defaultSettings(),
+    source,
   };
 
   const keyMap: Record<Exclude<TableName, "Settings">, DatasetTableKey> = {
@@ -261,22 +307,29 @@ export function parseWorkbook(
     if (!parsed) continue;
     if (!validateHeaders(table, parsed.headers, expected, issues)) continue;
     const schema = ROW_SCHEMAS[table];
+    const index: SheetIndex = { columns: parsed.columns, rows: {} };
     const out: Dataset[DatasetTableKey] = [];
-    parsed.rows.forEach((row, i) => {
-      const result = schema.safeParse(row);
+    parsed.rows.forEach((row) => {
+      const result = schema.safeParse(row.values);
       if (result.success) {
         (out as unknown[]).push(result.data);
+        const key =
+          table === "Snapshots"
+            ? snapshotKey(row.values)
+            : String(row.values[ENTITY_KEY[table]] ?? "");
+        if (key) index.rows[key] = row.excelRow;
       } else {
         for (const err of result.error.issues) {
           issues.push({
             table,
-            rowNumber: i + 2,
+            rowNumber: row.excelRow,
             column: String(err.path[0] ?? ""),
             message: err.message,
           });
         }
       }
     });
+    source.sheets[table] = index;
     dataset[keyMap[table]] = out as never;
   }
 
@@ -295,7 +348,16 @@ export function parseWorkbook(
         issues,
       )
     ) {
-      dataset.settings = parseSettings(settingsParsed.rows, issues);
+      const settingsIndex: SheetIndex = {
+        columns: settingsParsed.columns,
+        rows: {},
+      };
+      dataset.settings = parseSettings(
+        settingsParsed.rows,
+        issues,
+        settingsIndex,
+      );
+      source.sheets.Settings = settingsIndex;
     }
   }
 

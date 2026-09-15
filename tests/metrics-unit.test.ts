@@ -5,6 +5,7 @@ import {
   networkDays,
   startOfYear,
 } from "@/lib/metrics/dates";
+import { healthWhyLine } from "@/lib/metrics/derived";
 import { costRAG, marginRAG, scheduleRAG, worstRAG } from "@/lib/metrics/rag";
 import { round1, roundHalfAwayFromZero } from "@/lib/metrics/round";
 
@@ -53,5 +54,43 @@ describe("RAG", () => {
     expect(marginRAG("Active", 0.05, 0.3, 0.1, 0.05)).toBe("Red");
     expect(worstRAG("Green", "Amber", "N/A")).toBe("Amber");
     expect(worstRAG("N/A", "N/A")).toBe("N/A");
+  });
+});
+
+describe("healthWhyLine", () => {
+  it("does not say not-everything when all three legs are red", () => {
+    const line = healthWhyLine(
+      {
+        HealthScore: 0,
+        CostRAG: "Red",
+        ScheduleRAG: "Red",
+        MarginRAG: "Red",
+      },
+      [
+        { label: "Margin shortfall", deduction: 66, detail: "", provenance: [] },
+        { label: "Cost over-burn", deduction: 20, detail: "", provenance: [] },
+        { label: "Schedule slip", deduction: 22, detail: "", provenance: [] },
+      ],
+    );
+    expect(line.toLowerCase()).toContain("all three");
+    expect(line.toLowerCase()).not.toContain("not everything");
+    expect(line).toContain("66 of 100");
+  });
+
+  it("says on track when every leg is green", () => {
+    const line = healthWhyLine(
+      {
+        HealthScore: 96,
+        CostRAG: "Green",
+        ScheduleRAG: "Green",
+        MarginRAG: "Green",
+      },
+      [
+        { label: "Margin shortfall", deduction: 0.31, detail: "", provenance: [] },
+        { label: "Schedule slip", deduction: 4, detail: "", provenance: [] },
+        { label: "Cost over-burn", deduction: 0, detail: "", provenance: [] },
+      ],
+    );
+    expect(line.toLowerCase()).toContain("on track");
   });
 });

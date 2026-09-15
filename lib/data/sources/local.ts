@@ -6,13 +6,21 @@ import type { ParseResult } from "@/lib/data/types";
 export class LocalFileSource {
   constructor(private readonly filePath: string) {}
 
-  async fetch(force = false): Promise<ParseResult> {
-    void force; // local always reads disk; cache is handled by portfolio-service
+  async peekVersion(): Promise<string> {
+    const resolved = path.resolve(this.filePath);
+    const stat = await fs.stat(resolved);
+    return `mtime:${stat.mtimeMs}`;
+  }
+
+  async fetch(): Promise<ParseResult> {
     const resolved = path.resolve(this.filePath);
     const stat = await fs.stat(resolved);
     const buffer = await fs.readFile(resolved);
     const version = `mtime:${stat.mtimeMs}`;
-    return parseWorkbook(buffer, version, new Date());
+    return parseWorkbook(buffer, version, new Date(), {
+      fileId: path.basename(resolved),
+      fileModified: stat.mtime.toISOString(),
+    });
   }
 }
 

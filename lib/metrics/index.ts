@@ -1,6 +1,12 @@
 export { roundHalfAwayFromZero, round1 } from "@/lib/metrics/round";
 export { calendarDays, networkDays, addDays, startOfYear } from "@/lib/metrics/dates";
-export { costRAG, scheduleRAG, marginRAG, worstRAG } from "@/lib/metrics/rag";
+export {
+  costRAG,
+  scheduleRAG,
+  marginRAG,
+  worstRAG,
+  worstLegLabel,
+} from "@/lib/metrics/rag";
 export {
   computeProjectMetrics,
   computeAllProjectMetrics,

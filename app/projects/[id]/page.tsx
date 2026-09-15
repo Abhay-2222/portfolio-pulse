@@ -1,8 +1,23 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPortfolioPayload } from "@/lib/data/get-portfolio";
 import { AppShell } from "@/components/shell/AppShell";
+import { CopyBriefButton } from "@/components/ui/CopyBriefButton";
+import { ExpandableTile } from "@/components/ui/ExpandableTile";
 import { StatusGlyph } from "@/components/ui/StatusGlyph";
+import { CardStack, EntityCard, ragTone } from "@/components/ui/ListCard";
+import { StatGrid } from "@/components/ui/StatGrid";
+import { MeterBar } from "@/components/ui/Meter";
+import { EntityLink } from "@/components/ui/EntityLink";
+import { SourceLink } from "@/components/ui/Provenance";
+import { capTier4, findingsForSubject } from "@/lib/findings";
+import { FindingCard } from "@/components/overlay/FindingCard";
+import { exportFindingMarkdown } from "@/lib/overlay/export";
+import { isQueueFinding } from "@/lib/overlay/apply";
+import {
+  contingencyRemaining,
+  healthContributors,
+  healthWhyLine,
+} from "@/lib/metrics/derived";
 import {
   computeInvoiceMetrics,
   computeMilestoneStatus,
@@ -64,6 +79,38 @@ export default async function ProjectDetailPage({
     .map((r) => ({ item: r, metrics: computeRaidMetrics(r, payload.dataset) }))
     .sort((a, b) => b.metrics.RiskScore - a.metrics.RiskScore);
 
+  const pin = [
+    "people.overallocated_with_swap",
+    "money.milestone_passed_unbilled",
+    "money.margin_below_floor",
+  ];
+  const findings = capTier4(
+    findingsForSubject(payload.findings, "project", id).filter(isQueueFinding),
+  )
+    .slice()
+    .sort((a, b) => {
+      const ia = pin.indexOf(a.ruleId);
+      const ib = pin.indexOf(b.ruleId);
+      const pa = ia === -1 ? 99 : ia;
+      const pb = ib === -1 ? 99 : ib;
+      if (pa !== pb) return pa - pb;
+      return (b.amount ?? 0) - (a.amount ?? 0);
+    })
+    .slice(0, 4);
+  const remainingContingency = contingencyRemaining(payload.dataset, id);
+  const uninvoicedHere = payload.derived.uninvoicedMilestones.filter(
+    (m) => m.ProjectID === id,
+  );
+  const contributors = healthContributors(project, metrics, payload.dataset);
+  const why = healthWhyLine(metrics, contributors);
+  const copy = [
+    `# ${project.ProjectName}`,
+    findings.map((f) => exportFindingMarkdown(f)).join("\n\n"),
+    `${why} EAC uses the CPI method.`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
   return (
     <AppShell
       active="projects"
@@ -71,127 +118,320 @@ export default async function ProjectDetailPage({
       asOf={formatAsOf(payload.asOfDate)}
       backHref="/projects"
     >
-      <section className="rounded-[28px] bg-[var(--surface)] p-5 md:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-[15px] text-[var(--ink-2)]">
-              {client?.ClientName ?? project.ClientID} · {project.Portfolio}
+      <section id="health" className="card-tile scroll-mt-16">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="kicker">
+              {client ? (
+                <EntityLink
+                  type="client"
+                  id={client.ClientID}
+                  className="font-normal text-[var(--ink-2)]"
+                >
+                  {client.ClientName}
+                </EntityLink>
+              ) : (
+                project.ClientID
+              )}{" "}
+              · {project.Portfolio}
             </p>
-            <p className="mt-1 text-[15px] text-[var(--ink-2)]">
-              PM {pm?.FullName ?? project.ProjectManagerID} · {project.Status} ·{" "}
-              {project.Phase}
+            <p className="mt-3 kicker">PM</p>
+            <p className="mt-0.5 text-[15px] font-normal leading-5 text-[var(--ink)]">
+              {pm ? (
+                <EntityLink
+                  type="person"
+                  id={pm.EmployeeID}
+                  className="text-[15px] font-normal text-[var(--ink)]"
+                >
+                  {pm.FullName}
+                </EntityLink>
+              ) : (
+                project.ProjectManagerID
+              )}
+            </p>
+            <p className="mt-1 text-[13px] leading-5 text-[var(--ink-2)]">
+              {project.Status} · {project.Phase}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <StatusGlyph rag={metrics.OverallRAG} size={18} />
+          <div className="flex shrink-0 flex-col items-end gap-3">
+            <CopyBriefButton text={copy} />
             <div className="text-right">
-              <div className="text-[13px] text-[var(--ink-3)]">Health</div>
-              <div className="text-[28px] font-semibold leading-none">
+              <div className="kicker">Health</div>
+              <div
+                className="mt-0.5 text-[22px] font-normal leading-7"
+                style={{
+                  color:
+                    (metrics.HealthScore ?? 100) < 50
+                      ? "var(--off-track-text)"
+                      : "var(--ink)",
+                }}
+              >
                 {metrics.HealthScore ?? "—"}
               </div>
             </div>
           </div>
         </div>
+        {metrics.HealthScore != null ? (
+          <MeterBar
+            value={metrics.HealthScore}
+            reference={100}
+            tone={
+              metrics.OverallRAG === "Red"
+                ? "bad"
+                : metrics.OverallRAG === "Amber"
+                  ? "watch"
+                  : "good"
+            }
+            label="Health 0–100"
+            formatValue={(n) => String(Math.round(n))}
+          />
+        ) : null}
 
-        <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <Stat label="Contract" value={money(metrics.CurrentContractValue)} />
-          <Stat label="Forecast margin" value={pct(metrics.ForecastMarginPct)} bad={metrics.ForecastMarginPct < 0} />
-          <Stat label="Complete" value={pct(project.PctComplete)} />
-          <Stat label="Slip" value={`${metrics.ScheduleSlipDays}d`} bad={metrics.ScheduleSlipDays > 0} />
-        </div>
+        {metrics.HealthScore != null ? (
+          <div className="mt-4">
+            <p className="text-[15px] font-normal leading-5">{why}</p>
+            <ExpandableTile
+              summary={
+                <span className="text-[13px] font-normal">
+                  Contributors
+                </span>
+              }
+              detail={
+                <ul className="space-y-2">
+                  {contributors.map((c) => (
+                    <li key={c.label}>
+                      {c.label}: −{c.deduction.toFixed(1)} pts · {c.detail}
+                      {c.deduction === 0 ? " (no penalty)" : ""}
+                      <SourceLink refs={c.provenance} compact />
+                    </li>
+                  ))}
+                  <li className="pt-1">
+                    EAC uses the CPI method: remaining work at today&apos;s
+                    efficiency.
+                  </li>
+                </ul>
+              }
+            />
+          </div>
+        ) : null}
 
-        <div className="mt-4 flex flex-wrap gap-3 text-[13px]">
-          <Pill label={`Cost ${metrics.CostRAG}`} rag={metrics.CostRAG} />
-          <Pill label={`Schedule ${metrics.ScheduleRAG}`} rag={metrics.ScheduleRAG} />
-          <Pill label={`Margin ${metrics.MarginRAG}`} rag={metrics.MarginRAG} />
-        </div>
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+          <li className="flex items-center gap-1.5">
+            <StatusGlyph rag={metrics.CostRAG} size={12} />
+            <span className="text-[12px] font-normal leading-4">Cost</span>
+          </li>
+          <li className="flex items-center gap-1.5">
+            <StatusGlyph rag={metrics.ScheduleRAG} size={12} />
+            <span className="text-[12px] font-normal leading-4">Schedule</span>
+          </li>
+          <li className="flex items-center gap-1.5">
+            <StatusGlyph rag={metrics.MarginRAG} size={12} />
+            <span className="text-[12px] font-normal leading-4">Margin</span>
+          </li>
+        </ul>
       </section>
 
-      <Section title="Money">
-        <Row label="Budget (BAC)" value={money(metrics.CurrentBudget)} />
-        <Row label="Spent so far" value={money(metrics.ActualCost)} />
-        <Row label="Expected total cost" value={money(metrics.EAC)} />
-        <Row label="Still to spend" value={money(metrics.ETC)} />
-        <Row label="Invoiced" value={money(metrics.InvoicedToDate)} />
-        <Row label="Earned, not invoiced" value={money(metrics.UnbilledWIP)} last />
-      </Section>
+      {findings.length > 0 ? (
+        <section className="space-y-2">
+          <p className="kicker px-1">Urgent</p>
+          <CardStack>
+            {findings.map((f) => (
+              <div
+                key={f.id}
+                className="card-tile card-tile--bad overflow-hidden border-l-[3px] border-l-[var(--off-track-text)] !p-0"
+              >
+                <FindingCard finding={f} linked={false} compact />
+              </div>
+            ))}
+          </CardStack>
+        </section>
+      ) : null}
+
+      <StatGrid
+        cells={[
+          {
+            label: "Contract",
+            value: money(metrics.CurrentContractValue),
+          },
+          {
+            label: "Forecast margin",
+            value: pct(metrics.ForecastMarginPct),
+            tone: metrics.ForecastMarginPct < 0 ? "bad" : "neutral",
+          },
+          { label: "Complete", value: pct(project.PctComplete) },
+          {
+            label: "Slip",
+            value: `${metrics.ScheduleSlipDays}d`,
+            tone: metrics.ScheduleSlipDays > 14 ? "bad" : "neutral",
+          },
+        ]}
+      />
 
       <Section title="Team">
         {team.length === 0 ? (
           <Empty>No allocations on this project.</Empty>
         ) : (
-          team.map(({ allocation, person }, idx) => (
-            <Link
-              key={allocation.AllocationID}
-              href={person ? `/people/${person.EmployeeID}` : "/people"}
-              className={`flex min-h-14 items-center justify-between gap-3 px-4 py-3 ${
-                idx === team.length - 1 ? "" : "border-b border-[var(--hairline)]"
-              }`}
-            >
-              <div>
-                <div className="text-[17px] font-semibold">
-                  {person?.FullName ?? allocation.EmployeeID}
-                </div>
-                <div className="text-[15px] text-[var(--ink-2)]">
-                  {allocation.ProjectRole}
-                </div>
-              </div>
-              <div className="text-[15px] font-medium">
-                {pct(allocation.AllocationPct, 0)}
-              </div>
-            </Link>
-          ))
+          <CardStack>
+            {team.map(({ allocation, person }) => {
+            const total = payload.metrics.resources.find(
+              (r) => r.EmployeeID === allocation.EmployeeID,
+            );
+            const otherReds = payload.dataset.allocations.filter((a) => {
+              if (a.EmployeeID !== allocation.EmployeeID) return false;
+              if (a.ProjectID === id) return false;
+              if (
+                a.StartDate.getTime() > asOf.getTime() ||
+                asOf.getTime() > a.EndDate.getTime()
+              ) {
+                return false;
+              }
+              return (
+                payload.metrics.projects.find((m) => m.ProjectID === a.ProjectID)
+                  ?.OverallRAG === "Red"
+              );
+            });
+            return (
+              <EntityCard
+                key={allocation.AllocationID}
+                href={person ? `/people/${person.EmployeeID}` : "/people"}
+                kicker={allocation.ProjectRole}
+                title={person?.FullName ?? allocation.EmployeeID}
+                meta={
+                  otherReds.length > 0
+                    ? `also on ${otherReds.length} other off-track project${otherReds.length === 1 ? "" : "s"}`
+                    : undefined
+                }
+                tone={
+                  total?.UtilizationStatus === "Overallocated"
+                    ? "bad"
+                    : "neutral"
+                }
+                figure={pct(allocation.AllocationPct, 0)}
+                figureLabel="Here"
+                figureTone={
+                  total?.UtilizationStatus === "Overallocated"
+                    ? "bad"
+                    : "neutral"
+                }
+              >
+                {total ? (
+                  <p className="mt-1.5 text-[12px] leading-4 text-[var(--ink-2)]">
+                    {pct(total.CurrentAllocationPct, 0)} total
+                  </p>
+                ) : null}
+              </EntityCard>
+            );
+          })}
+          </CardStack>
         )}
       </Section>
 
+      <Section title="Money" id="money">
+        <div className="card-tile space-y-1 !p-0 overflow-hidden">
+        <div className="px-3.5 pt-3.5">
+          <MeterBar
+            value={metrics.EAC}
+            reference={metrics.CurrentBudget}
+            tone={metrics.EAC > metrics.CurrentBudget ? "bad" : "good"}
+            label="EAC vs budget (CPI method)"
+            formatValue={(n) => money(n)}
+          />
+        </div>
+        {metrics.EAC > metrics.CurrentBudget ? (
+          <Row
+            lead
+            label="This project · expected overrun"
+            value={money(metrics.EAC - metrics.CurrentBudget)}
+          />
+        ) : null}
+        {uninvoicedHere.length > 0 ? (
+          <Row
+            lead
+            label="This project · passed billing milestones, never invoiced"
+            value={money(uninvoicedHere.reduce((s, m) => s + m.amount, 0))}
+          />
+        ) : null}
+        {remainingContingency > 0 ? (
+          <Row
+            lead
+            label="Unused contingency"
+            value={money(remainingContingency)}
+          />
+        ) : null}
+        <Row label="Budget (BAC)" value={money(metrics.CurrentBudget)} />
+        <Row label="Spent so far" value={money(metrics.ActualCost)} />
+        <Row
+          label="Expected total cost (CPI method)"
+          value={money(metrics.EAC)}
+        />
+        <Row label="Still to spend" value={money(metrics.ETC)} />
+        <Row label="Invoiced" value={money(metrics.InvoicedToDate)} />
+        {metrics.UnbilledWIP >= 0 ? (
+          <Row
+            label="Earned, not invoiced"
+            value={money(metrics.UnbilledWIP)}
+            last
+          />
+        ) : (
+          <Row
+            label="Over-billed vs earned"
+            value={money(Math.abs(metrics.UnbilledWIP))}
+            last
+          />
+        )}
+        </div>
+      </Section>
+
       <Section title="Milestones">
-        {milestones.map(({ milestone, status }, idx) => (
-          <div
-            key={milestone.MilestoneID}
-            className={`flex min-h-14 items-center justify-between gap-3 px-4 py-3 ${
-              idx === milestones.length - 1 ? "" : "border-b border-[var(--hairline)]"
-            }`}
-          >
-            <div>
-              <div className="text-[17px] font-semibold">
-                {milestone.MilestoneName}
-              </div>
-              <div className="text-[15px] text-[var(--ink-2)]">
-                Forecast {formatDate(milestone.ForecastDate)}
-              </div>
-            </div>
-            <div className="text-[15px] font-medium">{status}</div>
-          </div>
-        ))}
+        {milestones.length === 0 ? (
+          <Empty>No milestones on this project.</Empty>
+        ) : (
+          <CardStack>
+            {milestones.map(({ milestone, status }) => (
+              <EntityCard
+                key={milestone.MilestoneID}
+                kicker="Milestone"
+                title={milestone.MilestoneName}
+                meta={`Forecast ${formatDate(milestone.ForecastDate)}`}
+                figure={status}
+                figureTone={status === "Overdue" ? "bad" : "neutral"}
+                tone={
+                  status === "Overdue"
+                    ? "bad"
+                    : status === "At Risk"
+                      ? "watch"
+                      : status === "Completed"
+                        ? "good"
+                        : "neutral"
+                }
+              />
+            ))}
+          </CardStack>
+        )}
       </Section>
 
       <Section title="Open risks & issues">
         {risks.length === 0 ? (
           <Empty>No open RAID items.</Empty>
         ) : (
-          risks.slice(0, 8).map(({ item, metrics: rm }, idx) => (
-            <Link
-              key={item.RAIDID}
-              href="/risks"
-              className={`flex min-h-14 items-center justify-between gap-3 px-4 py-3 ${
-                idx === Math.min(risks.length, 8) - 1
-                  ? ""
-                  : "border-b border-[var(--hairline)]"
-              }`}
-            >
-              <div className="min-w-0">
-                <div className="truncate text-[17px] font-semibold">
-                  {item.Title}
-                </div>
-                <div className="text-[15px] text-[var(--ink-2)]">
-                  {item.Type} · {rm.Severity}
-                </div>
-              </div>
-              <div className="text-[15px] font-medium">
-                {money(rm.ExpectedExposure)}
-              </div>
-            </Link>
-          ))
+          <CardStack>
+            {risks.slice(0, 8).map(({ item, metrics: rm }) => (
+              <EntityCard
+                key={item.RAIDID}
+                href={`/risks/${item.RAIDID}`}
+                kicker={`${item.Type} · ${rm.Severity}`}
+                title={item.Title}
+                figure={money(rm.ExpectedExposure)}
+                figureLabel="Exposure"
+                figureTone={
+                  rm.Severity === "Critical" || rm.Severity === "High"
+                    ? "bad"
+                    : "neutral"
+                }
+                tone={ragTone(rm.Severity)}
+              />
+            ))}
+          </CardStack>
         )}
       </Section>
 
@@ -199,49 +439,47 @@ export default async function ProjectDetailPage({
         {invoices.length === 0 ? (
           <Empty>No invoices yet.</Empty>
         ) : (
-          invoices.slice(0, 8).map(({ invoice, metrics: im }, idx) => (
-            <div
-              key={invoice.InvoiceID}
-              className={`flex min-h-14 items-center justify-between gap-3 px-4 py-3 ${
-                idx === Math.min(invoices.length, 8) - 1
-                  ? ""
-                  : "border-b border-[var(--hairline)]"
-              }`}
-            >
-              <div>
-                <div className="text-[17px] font-semibold">
-                  {invoice.InvoiceID}
-                </div>
-                <div className="text-[15px] text-[var(--ink-2)]">
-                  {formatDate(invoice.InvoiceDate)} · {im.Status}
-                </div>
-              </div>
-              <div className="text-[15px] font-medium">
-                {money(invoice.Amount)}
-              </div>
-            </div>
-          ))
+          <CardStack>
+            {invoices.slice(0, 8).map(({ invoice, metrics: im }) => (
+              <EntityCard
+                key={invoice.InvoiceID}
+                href={`/money/${invoice.InvoiceID}`}
+                kicker={im.Status}
+                title={invoice.InvoiceID}
+                meta={`Invoiced ${formatDate(invoice.InvoiceDate)}`}
+                figure={money(invoice.Amount)}
+                figureLabel="Amount"
+                figureTone={im.Status === "Overdue" ? "bad" : "neutral"}
+                tone={ragTone(im.Status)}
+              />
+            ))}
+          </CardStack>
         )}
       </Section>
+
+      <p className="px-1 text-[13px] text-[var(--ink-3)]">
+        Read-only from the workbook. EAC is the CPI method. Currency CAD.
+      </p>
     </AppShell>
   );
 }
 
 function Section({
   title,
+  id,
   children,
 }: {
   title: string;
+  id?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section>
-      <h2 className="mb-3 px-1 text-[20px] font-semibold leading-[25px]">
-        {title}
-      </h2>
-      <div className="overflow-hidden rounded-[14px] bg-[var(--surface)]">
-        {children}
-      </div>
+    <section
+      id={id}
+      className={`space-y-2 ${id ? "scroll-mt-16" : ""}`}
+    >
+      <h2 className="px-1 text-[15px] font-normal leading-5">{title}</h2>
+      {children}
     </section>
   );
 }
@@ -250,54 +488,29 @@ function Row({
   label,
   value,
   last,
+  lead,
 }: {
   label: string;
   value: string;
   last?: boolean;
+  lead?: boolean;
 }) {
   return (
     <div
-      className={`flex min-h-14 items-center justify-between gap-4 px-4 py-3 ${
+      className={`flex min-h-12 items-center justify-between gap-4 px-3 py-2.5 ${
         last ? "" : "border-b border-[var(--hairline)]"
       }`}
     >
-      <div className="text-[17px]">{label}</div>
-      <div className="text-[17px] font-semibold">{value}</div>
-    </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  bad,
-}: {
-  label: string;
-  value: string;
-  bad?: boolean;
-}) {
-  return (
-    <div className="rounded-[14px] bg-[var(--surface-2)] px-3 py-3">
-      <div className="text-[13px] text-[var(--ink-3)]">{label}</div>
-      <div
-        className="mt-1 text-[20px] font-semibold"
-        style={{ color: bad ? "var(--off-track-text)" : "var(--ink)" }}
-      >
+      <div className={lead ? "text-[15px] font-normal" : "text-[13px] text-[var(--ink-2)]"}>
+        {label}
+      </div>
+      <div className={lead ? "text-[15px] font-normal" : "text-[13px] font-normal"}>
         {value}
       </div>
     </div>
   );
 }
 
-function Pill({ label, rag }: { label: string; rag: string }) {
-  return (
-    <span className="inline-flex min-h-9 items-center gap-2 rounded-full bg-[var(--surface-2)] px-3 text-[13px]">
-      <StatusGlyph rag={rag} size={12} />
-      {label}
-    </span>
-  );
-}
-
 function Empty({ children }: { children: React.ReactNode }) {
-  return <p className="px-4 py-5 text-[15px] text-[var(--ink-2)]">{children}</p>;
+  return <p className="card-tile text-[15px] text-[var(--ink-2)]">{children}</p>;
 }

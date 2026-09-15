@@ -15,7 +15,7 @@ export default async function HomePage() {
   if (error || !payload) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-16">
-        <h1 className="text-[34px] font-bold leading-[41px] tracking-tight">
+        <h1 className="text-[34px] font-normal leading-[41px] tracking-tight">
           Portfolio Pulse
         </h1>
         <p className="mt-3 text-[17px] text-[var(--ink-2)]">
