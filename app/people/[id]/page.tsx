@@ -202,7 +202,7 @@ export default async function PersonDetailPage({
                 <EntityCard
                   key={a.AllocationID}
                   href={`/projects/${a.ProjectID}`}
-                  kicker={`${formatDate(a.StartDate)} – ${formatDate(a.EndDate)}`}
+                  kicker={`${formatDate(a.StartDate)} to ${formatDate(a.EndDate)}`}
                   title={project?.ProjectName ?? a.ProjectID}
                   figure={pct(a.AllocationPct, 0)}
                   figureLabel="Alloc"

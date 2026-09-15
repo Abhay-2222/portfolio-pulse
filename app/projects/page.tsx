@@ -5,7 +5,7 @@ import { FilterChips } from "@/components/ui/FilterChips";
 import { CardStack, EntityCard, ragTone } from "@/components/ui/ListCard";
 import { computeMilestoneStatus } from "@/lib/metrics/finance";
 import { worstLegLabel } from "@/lib/metrics/rag";
-import { formatAsOf, money, pct } from "@/lib/format";
+import { EMPTY_FIGURE, formatAsOf, money, pct } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +94,7 @@ export default async function ProjectsPage({
     params.slip === "overdue"
       ? `${n} with overdue milestone${n === 1 ? "" : "s"}`
       : params.rag === "attention"
-        ? `${n} need attention — red and amber`
+        ? `${n} need attention (red and amber)`
         : params.rag === "Red"
           ? `${n} off track`
           : statusFilter === "Planned"
@@ -116,7 +116,7 @@ export default async function ProjectsPage({
         {rows.map((row) => {
           const worst =
             row.metrics.OverallRAG === "N/A"
-              ? "—"
+              ? EMPTY_FIGURE
               : row.metrics.OverallRAG === "Red" ||
                   row.metrics.OverallRAG === "Amber"
                 ? worstLegLabel(row.metrics)
@@ -127,10 +127,10 @@ export default async function ProjectsPage({
               ? `${row.metrics.ScheduleSlipDays}d slip`
               : row.metrics.scheduleReady
                 ? null
-                : "slip —",
+                : null,
             row.metrics.marginReady
               ? money(row.metrics.CurrentContractValue)
-              : "contract —",
+              : null,
           ]
             .filter(Boolean)
             .join(" · ");
@@ -146,7 +146,7 @@ export default async function ProjectsPage({
               figure={
                 row.metrics.marginReady
                   ? pct(row.metrics.ForecastMarginPct)
-                  : "—"
+                  : EMPTY_FIGURE
               }
               figureLabel="Margin"
               figureTone={

@@ -30,7 +30,7 @@ export function exportQueueMarkdown(
 ): string {
   const lines = [
     `# Pulse queue`,
-    `As of ${formatAsOf(asOf)}. Overlay only — source files were not changed.`,
+    `As of ${formatAsOf(asOf)}. Overlay only. Source files were not changed.`,
     ...findings.map((f) => {
       const extra = overlayLine(f);
       return `- ${f.headline}${extra ? ` (${extra})` : ""}`;

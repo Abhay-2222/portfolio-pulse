@@ -5,6 +5,7 @@ import type { ProjectMetrics } from "@/lib/metrics/project";
 import type { ResourceMetrics } from "@/lib/metrics/resource";
 import type { HealthContributor } from "@/lib/findings/types";
 import { cells } from "@/lib/ledger/cells";
+import { EMPTY_FIGURE } from "@/lib/format";
 
 export type UninvoicedMilestone = {
   MilestoneID: string;
@@ -181,7 +182,7 @@ export function healthWhyLine(
   const bad = legs.filter((l) => l.rag !== "Green" && l.rag !== "N/A");
   const top = [...contributors].sort((a, b) => b.deduction - a.deduction)[0];
   const pts = Math.round(top?.deduction ?? 0);
-  const health = metrics.HealthScore ?? "—";
+  const health = metrics.HealthScore ?? EMPTY_FIGURE;
   if (bad.length === 0) {
     return `Health ${health}: on track on all three.`;
   }
@@ -190,9 +191,9 @@ export function healthWhyLine(
   }
   const hit = top?.label ?? "The top contributor";
   if (bad.length === 3 && legs.every((l) => l.rag === "Red")) {
-    return `Health ${health}: red on all three. ${hit} is the biggest hit — ${pts} of 100 points.`;
+    return `Health ${health}: red on all three. ${hit} is the biggest hit: ${pts} of 100 points.`;
   }
-  return `Health ${health}: ${bad.map((b) => b.name).join(" and ")}. ${hit} costs the most — ${pts} points.`;
+  return `Health ${health}: ${bad.map((b) => b.name).join(" and ")}. ${hit} costs the most: ${pts} points.`;
 }
 
 export function daysInReview(raised: Date, asOf: Date): number {

@@ -23,7 +23,7 @@ import {
   computeMilestoneStatus,
 } from "@/lib/metrics/finance";
 import { computeRaidMetrics } from "@/lib/metrics/risk";
-import { formatAsOf, formatDate, money, pct } from "@/lib/format";
+import { EMPTY_FIGURE, formatAsOf, formatDate, money, pct } from "@/lib/format";
 import { ProjectMore } from "@/components/book/ProjectMore";
 import { entityCoverage, hasEntityMore } from "@/lib/data/coverage";
 
@@ -169,7 +169,7 @@ export default async function ProjectDetailPage({
                       : "var(--ink)",
                 }}
               >
-                {metrics.HealthScore ?? "—"}
+                {metrics.HealthScore ?? EMPTY_FIGURE}
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default async function ProjectDetailPage({
                   ? "watch"
                   : "good"
             }
-            label="0–100"
+            label="0 to 100"
             showValue={false}
             className=""
             formatValue={(n) => String(Math.round(n))}
@@ -257,11 +257,11 @@ export default async function ProjectDetailPage({
         cells={[
           {
             label: "Contract",
-            value: metrics.marginReady ? money(metrics.CurrentContractValue) : "—",
+            value: metrics.marginReady ? money(metrics.CurrentContractValue) : EMPTY_FIGURE,
           },
           {
             label: "Forecast margin",
-            value: metrics.marginReady ? pct(metrics.ForecastMarginPct) : "—",
+            value: metrics.marginReady ? pct(metrics.ForecastMarginPct) : EMPTY_FIGURE,
             tone:
               metrics.marginReady && metrics.ForecastMarginPct < 0
                 ? "bad"
@@ -270,12 +270,12 @@ export default async function ProjectDetailPage({
           {
             label: "Complete",
             value: (project.absent ?? []).includes("PctComplete")
-              ? "—"
+              ? EMPTY_FIGURE
               : pct(project.PctComplete),
           },
           {
             label: "Slip",
-            value: metrics.scheduleReady ? `${metrics.ScheduleSlipDays}d` : "—",
+            value: metrics.scheduleReady ? `${metrics.ScheduleSlipDays}d` : EMPTY_FIGURE,
             tone:
               metrics.scheduleReady && metrics.ScheduleSlipDays > 14
                 ? "bad"

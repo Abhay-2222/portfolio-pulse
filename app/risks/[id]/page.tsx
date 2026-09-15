@@ -10,7 +10,7 @@ import { computeRaidMetrics } from "@/lib/metrics/risk";
 import { calendarDays } from "@/lib/metrics/dates";
 import { pxILine } from "@/lib/metrics/labels";
 import { cells } from "@/lib/ledger/cells";
-import { formatAsOf, formatDate, money } from "@/lib/format";
+import { formatAsOf, formatDate, money, EMPTY_FIGURE } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -104,7 +104,7 @@ export default async function RaidBriefPage({
           },
           {
             label: "Target",
-            value: item.TargetDate ? formatDate(item.TargetDate) : "—",
+            value: item.TargetDate ? formatDate(item.TargetDate) : EMPTY_FIGURE,
             tone: pastDays != null ? "bad" : "neutral",
             sub:
               pastDays != null
@@ -116,7 +116,7 @@ export default async function RaidBriefPage({
             value:
               item.RaisedDate != null
                 ? `${calendarDays(item.RaisedDate, asOf)}d`
-                : "—",
+                : EMPTY_FIGURE,
           },
         ]}
       />

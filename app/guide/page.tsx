@@ -24,7 +24,7 @@ export default async function GuidePage() {
         <p className="kicker">The briefing</p>
         <ol className="list-decimal space-y-2 pl-5 text-[13px] leading-5">
           <li>
-            <strong>Home</strong> — your projects first, then the book. Tap a
+            <strong>Home</strong>: your projects first, then the book. Tap a
             card to open a brief.
           </li>
           <li>
@@ -57,12 +57,13 @@ export default async function GuidePage() {
         </p>
         <ol className="list-decimal space-y-2 pl-5 text-[13px] leading-5">
           <li>
-            Start from the template if you can — download, replace demo rows,
-            keep headers, re-upload or paste a public Sheet link.
+            Start from the template if you can. Download, replace demo rows,
+            keep headers, then re-upload or paste a public Sheet link.
           </li>
           <li>
             A close cousin still briefs. Pulse maps what it can. Extra sheets
-            and skinny rows go to More. Missing is —, never a fake 0.
+            and skinny rows go to More. Missing figures stay empty, never a
+            fake 0.
           </li>
           <li>
             Google Sheets need “anyone with the link.” Private Drive: download
@@ -75,7 +76,7 @@ export default async function GuidePage() {
         <p className="kicker">Honest limits</p>
         <p className="text-[13px] leading-5 text-[var(--ink-2)]">
           This is a briefing, not a PMO system. No login. Cost rates stay
-          hidden. On the hosted demo, uploads do not survive a restart — run
+          hidden. On the hosted demo, uploads do not survive a restart. Run
           locally or link a public Sheet. The live site briefs the shipped
           master until you add your own file.
         </p>

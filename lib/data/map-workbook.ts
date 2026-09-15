@@ -259,7 +259,7 @@ export function mapWorkbookToCanonical(
             kind: "invoice",
             label: sampleCell(descBind ? row[descBind.sourceHeader] : `row ${rowIdx + 1}`),
             amount: Number(amountBind ? row[amountBind.sourceHeader] : 0) || undefined,
-            reason: "Invoice with no project — not attached to a brief",
+            reason: "Invoice with no project, not attached to a brief",
           });
           return;
         }
@@ -295,7 +295,7 @@ export function mapWorkbookToCanonical(
           if (headerNorm === "notes" || headerNorm === "note") {
             notes.push(
               looksLikeRaidNote(String(value))
-                ? "RAID as a note — not a RAID finding"
+                ? "RAID as a note, not a RAID finding"
                 : "Note is not a Pulse field",
             );
           }

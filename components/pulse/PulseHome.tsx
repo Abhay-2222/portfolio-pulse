@@ -107,7 +107,7 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
             The book
           </p>
           <p className="mt-1 text-[12px] leading-4 text-[var(--ink-2)]">
-            Across every active project — not the one above.
+            Across every active project, not the one above.
           </p>
         </div>
         <MagicBentoGrid>

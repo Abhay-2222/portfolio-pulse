@@ -11,33 +11,31 @@ export function LinkForm({ envLocked }: { envLocked: boolean }) {
   );
 
   return (
-    <form action={action} className="space-y-3">
-      <label className="card-tile block">
-        <p className="kicker">Web link</p>
-        <p className="mt-1 text-[16px] font-normal leading-5 tracking-[-0.02em]">
-          Google Sheet or .xlsx URL
-        </p>
+    <form action={action} className="space-y-2">
+      <label className="block">
+        <p className="kicker">Sheet or file URL</p>
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+          <input
+            className="min-w-0 flex-1 rounded-[10px] border border-[var(--tile-border)] bg-[var(--surface)] px-3 py-2 text-[15px] text-[var(--ink)] outline-none placeholder:text-[var(--ink-3)]"
+            type="url"
+            name="url"
+            inputMode="url"
+            autoComplete="off"
+            placeholder="https://docs.google.com/spreadsheets/d/…"
+            disabled={envLocked || pending}
+          />
+          <button
+            type="submit"
+            className={`${btnCommit} sm:min-w-24`}
+            disabled={envLocked || pending}
+          >
+            {pending ? "Fetching…" : "Use link"}
+          </button>
+        </div>
         <p className="mt-1.5 text-[12px] leading-4 text-[var(--ink-2)]">
-          Share the Google Sheet with anyone with the link, or paste a direct
-          .xlsx URL. Private Drive files need a downloaded .xlsx.
+          Anyone-with-the-link Sheets, or a direct .xlsx URL.
         </p>
-        <input
-          className="mt-3 w-full rounded-[10px] border border-[var(--tile-border)] bg-[var(--surface)] px-3 py-2 text-[15px] text-[var(--ink)] outline-none placeholder:text-[var(--ink-3)]"
-          type="url"
-          name="url"
-          inputMode="url"
-          autoComplete="off"
-          placeholder="https://docs.google.com/spreadsheets/d/…"
-          disabled={envLocked || pending}
-        />
       </label>
-      <button
-        type="submit"
-        className={`${btnCommit} w-full`}
-        disabled={envLocked || pending}
-      >
-        {pending ? "Fetching…" : "Use this link"}
-      </button>
       {state ? (
         <p
           className={`text-[13px] leading-5 ${

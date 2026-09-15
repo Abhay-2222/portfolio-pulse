@@ -4,7 +4,7 @@ import { useId, useRef, useState } from "react";
 import Link from "next/link";
 import { StatusGlyph } from "@/components/ui/StatusGlyph";
 import { Sparkline } from "@/components/ui/Sparkline";
-import { money, pct } from "@/lib/format";
+import { EMPTY_FIGURE, money, pct } from "@/lib/format";
 
 export type ProjectBento = {
   id: string;
@@ -110,7 +110,7 @@ export function ProjectBentoCarousel({
 }
 
 function ProjectSpread({ project: p }: { project: ProjectBento }) {
-  const health = p.health == null ? "—" : String(Math.round(p.health));
+  const health = p.health == null ? EMPTY_FIGURE : String(Math.round(p.health));
   const healthHref = `/projects/${p.id}#health`;
   const moneyHref = `/projects/${p.id}#money`;
   const projectHref = `/projects/${p.id}`;
@@ -150,7 +150,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
                   : "var(--ink)",
           }}
         >
-          {p.margin == null ? "—" : pct(p.margin)}
+          {p.margin == null ? EMPTY_FIGURE : pct(p.margin)}
         </div>
         {p.spark.length >= 2 ? (
           <Sparkline values={p.spark} label={`${p.spark.length} mo`} />
@@ -168,7 +168,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
             color: p.slip != null && p.slip > 0 ? "var(--off-track-text)" : "var(--ink)",
           }}
         >
-          {p.slip == null ? "—" : `${p.slip}d`}
+          {p.slip == null ? EMPTY_FIGURE : `${p.slip}d`}
         </div>
       </Tile>
 
@@ -178,7 +178,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
       >
         <p className="kicker">Contract</p>
         <div className="figure mt-1.5">
-          {p.contract == null ? "—" : money(p.contract)}
+          {p.contract == null ? EMPTY_FIGURE : money(p.contract)}
         </div>
       </Tile>
 
@@ -190,7 +190,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
           {p.unbilled >= 0 ? "Earned, unbilled" : "Over-billed"}
         </p>
         <div className="figure mt-1.5">
-          {p.margin == null ? "—" : unbilledAbs}
+          {p.margin == null ? EMPTY_FIGURE : unbilledAbs}
         </div>
       </Tile>
     </div>

@@ -77,8 +77,8 @@ export function AgingBar({
       </div>
       <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-4 text-[var(--ink-2)]">
         <AgingLegend color="var(--on-track)" label={`Current ${money(current)}`} />
-        <AgingLegend color="var(--watch)" label={`1–30 ${money(d30)}`} />
-        <AgingLegend color="var(--off-track)" label={`31–60 ${money(d60)}`} />
+        <AgingLegend color="var(--watch)" label={`1 to 30 ${money(d30)}`} />
+        <AgingLegend color="var(--off-track)" label={`31 to 60 ${money(d60)}`} />
         <AgingLegend color="var(--off-track-text)" label={`60+ ${money(d90)}`} />
       </div>
     </div>

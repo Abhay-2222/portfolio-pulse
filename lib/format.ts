@@ -1,3 +1,6 @@
+/** Missing figure. Never a fake 0, and never a dash. */
+export const EMPTY_FIGURE = "n/a";
+
 export function moneyExact(n: number): string {
   const abs = Math.abs(n);
   const sign = n < 0 ? "−" : "";
@@ -77,9 +80,9 @@ export function formatHoldUntil(iso: string, now = new Date()): string {
 }
 
 export function formatDate(d: Date | string | null | undefined): string {
-  if (!d) return "—";
+  if (!d) return EMPTY_FIGURE;
   const date = typeof d === "string" ? new Date(d) : d;
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return EMPTY_FIGURE;
   return date.toLocaleDateString("en-CA", {
     year: "numeric",
     month: "short",

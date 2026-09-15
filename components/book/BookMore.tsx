@@ -50,15 +50,15 @@ export function BookMore({ coverage }: { coverage: BookCoverage }) {
           <ul className="mt-1 space-y-1 text-[13px] leading-5 text-[var(--ink-2)]">
             {orphans.map((row, i) => (
               <li key={`${row.label}-${i}`}>
-                {row.label || "Invoice"} — {row.reason}
+                {row.label || "Invoice"}: {row.reason}
               </li>
             ))}
           </ul>
         </div>
       ) : null}
       <p className="text-[12px] leading-4 text-[var(--ink-3)]">
-        Uneven rows are expected. Missing is —, never a fake 0. Pulse will not
-        invent RAID from a colour or a note.
+        Uneven rows are expected. Missing figures stay empty, never a fake 0.
+        Pulse will not invent RAID from a colour or a note.
       </p>
     </section>
   );

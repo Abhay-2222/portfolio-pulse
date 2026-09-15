@@ -173,7 +173,7 @@ function statusLine(finding: Finding): string | null {
         : finding.snoozeBroke === "source"
           ? "the source moved"
           : "the hold ended";
-    return `Back — ${why}`;
+    return `Back: ${why}`;
   }
   const mine = finding.owner ? "Yours" : null;
   if (finding.disposition === "snoozed" && finding.snoozeUntil) {

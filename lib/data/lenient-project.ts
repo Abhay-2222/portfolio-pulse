@@ -126,7 +126,7 @@ export function hydrateProject(values: Record<string, unknown>): Project | null 
   note("BusinessUnit", !BusinessUnit);
   const ProjectManagerID = String(values.ProjectManagerID ?? "").trim();
   note("ProjectManagerID", !ProjectManagerID);
-  const Phase = String(values.Phase ?? "").trim() || "—";
+  const Phase = String(values.Phase ?? "").trim();
   note("Phase", !String(values.Phase ?? "").trim());
 
   return {

@@ -3,7 +3,7 @@ import { getPortfolioPayload } from "@/lib/data/get-portfolio";
 import { AppShell } from "@/components/shell/AppShell";
 import { formatAsOf } from "@/lib/format";
 import { CardStack, EntityCard } from "@/components/ui/ListCard";
-import { btnDefer } from "@/components/ui/Button";
+import { btnCommit, btnDefer } from "@/components/ui/Button";
 import { hasBookMore } from "@/lib/data/coverage";
 import { loadUserSource, REQUIRED_SHEETS } from "@/lib/data/user-source";
 import { UploadForm } from "@/app/book/UploadForm";
@@ -19,12 +19,28 @@ import {
 
 export const dynamic = "force-dynamic";
 
+function Chip({ children }: { children: string }) {
+  return (
+    <span className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-[11px] leading-4 text-[var(--ink-2)]">
+      {children}
+    </span>
+  );
+}
+
 export default async function BookPage() {
   const payload = await getPortfolioPayload();
   const library = await loadUserSource();
   const envLocked = Boolean(process.env.DATA_FILE_PATH);
   const issues = payload.issues.slice(0, 24);
   const coverage = payload.coverage;
+  const kindChip =
+    payload.book.kind === "demo"
+      ? "Demo"
+      : payload.book.kind === "sheet"
+        ? "Google Sheet"
+        : payload.book.kind === "url"
+          ? "Linked file"
+          : "Uploaded";
 
   return (
     <AppShell
@@ -33,41 +49,43 @@ export default async function BookPage() {
       asOf={formatAsOf(payload.asOfDate)}
       refreshMinutes={payload.dataset.settings.AutoRefreshMinutes}
     >
-      <p className="px-1 text-[13px] leading-5 text-[var(--ink-2)]">
-        Start from our template if you can. If your export is close but named
-        differently, Pulse will map what it can. Pulse never writes back —
-        edit in Excel or Sheets.{" "}
-        <Link href="/guide" className="text-[var(--accent)]">
-          How to use
-        </Link>
-        .
-      </p>
+      <div className="px-1">
+        <p className="page-title">Your book</p>
+        <p className="mt-1 text-[13px] leading-5 text-[var(--ink-2)]">
+          Pulse reads one workbook. It never writes Excel.{" "}
+          <Link href="/guide" className="text-[var(--accent)]">
+            How to use
+          </Link>
+        </p>
+      </div>
 
       <section className="card-tile">
-        <p className="kicker">Now briefing</p>
-        <p className="mt-1 text-[16px] font-normal leading-5 tracking-[-0.02em]">
-          {payload.book.label}
-        </p>
-        <p className="mt-1.5 text-[12px] leading-4 text-[var(--ink-2)]">
-          {payload.dataset.projects.length} projects · as of{" "}
-          {formatAsOf(payload.asOfDate)}
-          {payload.book.kind === "demo" ? " · demo book" : ""}
-          {payload.book.kind === "sheet" ? " · Google Sheet" : ""}
-          {payload.book.kind === "url" ? " · linked file" : ""}
-          {payload.book.ephemeral
-            ? " · this host does not keep sources after restart — run locally to persist"
-            : ""}
-        </p>
-        {payload.book.href ? (
-          <p className="mt-2 text-[13px] leading-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="kicker">Now briefing</p>
+            <p className="mt-1 text-[16px] font-normal leading-5 tracking-[-0.02em]">
+              {payload.book.label}
+            </p>
+          </div>
+          {payload.book.href ? (
             <a
               href={payload.book.href}
               target="_blank"
               rel="noreferrer"
-              className="text-[var(--accent)]"
+              className="shrink-0 text-[13px] leading-5 text-[var(--accent)]"
             >
-              Open source
+              Open
             </a>
+          ) : null}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          <Chip>{`${payload.dataset.projects.length} projects`}</Chip>
+          <Chip>{`As of ${formatAsOf(payload.asOfDate)}`}</Chip>
+          <Chip>{kindChip}</Chip>
+        </div>
+        {payload.book.ephemeral ? (
+          <p className="mt-3 text-[12px] leading-4 text-[var(--ink-3)]">
+            Uploads on this host reset on restart. Run locally to keep them.
           </p>
         ) : null}
         {payload.book.kind !== "demo" ? (
@@ -84,14 +102,15 @@ export default async function BookPage() {
           DATA_FILE_PATH is set. Unset it to upload or paste a link.
         </p>
       ) : (
-        <>
-          <section className="space-y-3">
-            <p className="kicker px-1">Start from our template</p>
-            <p className="px-1 text-[13px] leading-5 text-[var(--ink-2)]">
-              Download, replace the demo rows, keep sheet names and headers.
-              Or copy the demo into My books and overwrite it after you edit.
-            </p>
-            <a href="/book/template" className={`${btnDefer} w-full`}>
+        <div className="grid gap-3 lg:grid-cols-2">
+          <section className="card-tile flex flex-col gap-3">
+            <div>
+              <p className="kicker">Start from the template</p>
+              <p className="mt-1.5 text-[13px] leading-5 text-[var(--ink-2)]">
+                Keep sheet names and headers. Replace the demo rows with yours.
+              </p>
+            </div>
+            <a href="/book/template" className={`${btnCommit} w-full`}>
               Download template
             </a>
             <form action={copyDemoBook}>
@@ -101,16 +120,17 @@ export default async function BookPage() {
             </form>
           </section>
 
-          <section className="space-y-3">
-            <p className="kicker px-1">Bring your own file</p>
-            <p className="px-1 text-[13px] leading-5 text-[var(--ink-2)]">
-              One workbook. Close cousins are mapped. Uneven rows brief on
-              what they have; the rest lands in More.
-            </p>
+          <section className="card-tile flex flex-col gap-3">
+            <div>
+              <p className="kicker">Bring your own</p>
+              <p className="mt-1.5 text-[13px] leading-5 text-[var(--ink-2)]">
+                One workbook. Close cousins map. Uneven rows still brief.
+              </p>
+            </div>
             <UploadForm envLocked={envLocked} />
             <LinkForm envLocked={envLocked} />
           </section>
-        </>
+        </div>
       )}
 
       {coverage.mapped ? <MappingCard coverage={coverage} /> : null}
@@ -177,16 +197,17 @@ export default async function BookPage() {
 
       <section className="card-tile">
         <p className="kicker">Template sheets</p>
-        <p className="mt-2 text-[13px] leading-5 text-[var(--ink-2)]">
-          {REQUIRED_SHEETS.join(" · ")}
-        </p>
-        <p className="mt-2 text-[12px] leading-4 text-[var(--ink-2)]">
-          Prefer the template when you can. Private Sheets stay
-          download-then-upload.{" "}
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {REQUIRED_SHEETS.map((sheet) => (
+            <Chip key={sheet}>{sheet}</Chip>
+          ))}
+        </div>
+        <p className="mt-3 text-[12px] leading-4 text-[var(--ink-3)]">
+          Private Sheets stay download then upload.{" "}
           <Link href="/sources" className="text-[var(--accent)]">
             Sources
           </Link>{" "}
-          is a mapping demo. It does not replace this book.
+          is a mapping demo, not this book.
         </p>
       </section>
 
@@ -201,7 +222,7 @@ export default async function BookPage() {
               >
                 {issue.table}
                 {issue.rowNumber ? ` · row ${issue.rowNumber}` : ""}
-                {issue.column ? ` · ${issue.column}` : ""} — {issue.message}
+                {issue.column ? ` · ${issue.column}` : ""}: {issue.message}
               </p>
             ))}
             {payload.issues.length > issues.length ? (
