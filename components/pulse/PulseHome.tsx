@@ -87,7 +87,7 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
             className="bg-[var(--surface-2)]"
           >
           <div
-            className="text-[28px] font-normal leading-7 tracking-[-0.03em]"
+            className="figure"
             style={{
               color:
                 uninvoicedSum > 0 ? "var(--off-track-text)" : "var(--ink)",
@@ -108,7 +108,7 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
           href="/money"
           className="bg-[var(--hero)]"
         >
-          <div className="text-[28px] font-normal leading-7 tracking-[-0.03em]">
+          <div className="figure">
             {pct(kpis.forecastMarginPct)}
           </div>
           <p
@@ -151,7 +151,7 @@ export function PulseHome({ payload }: { payload: PortfolioPayload }) {
             href="/projects?status=Active"
             className="bg-[var(--surface-2)]"
           >
-            <div className="text-[28px] font-normal leading-7 tracking-[-0.03em]">
+            <div className="figure">
               {staleN}
             </div>
             <p className="mt-1.5 text-[12px] leading-4 text-[var(--ink-2)]">

@@ -52,8 +52,8 @@ export function StatCellView({
     <div className={tile}>
       <div className="kicker">{label}</div>
       <div
-        className={`mt-1 font-normal tracking-[-0.03em] ${
-          size === "sm" ? "text-[16px] leading-5" : "text-[22px] leading-6"
+        className={`mt-1 figure ${
+          size === "sm" ? "!text-[16px] !leading-5" : ""
         }`}
         style={{ color }}
       >

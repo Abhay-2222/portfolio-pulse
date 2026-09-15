@@ -44,7 +44,7 @@ export function MetricStat({
   return (
     <div>
       <div
-        className={`text-[36px] font-normal leading-none tracking-[-0.04em] ${
+        className={`figure ${
           inverted ? "text-white" : "text-[var(--accent)]"
         }`}
       >

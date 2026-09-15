@@ -97,6 +97,14 @@
     color: var(--ink-2);
   }
 
+  .figure {
+    font-size: 1.375rem;
+    font-weight: 400;
+    line-height: 1.375;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;
@@ -275,28 +283,28 @@
 }
 
 .health-tile--bad {
-  background: color-mix(in srgb, var(--off-track) 16%, var(--surface));
-  border-color: color-mix(in srgb, var(--off-track) 22%, transparent);
+  background: color-mix(in srgb, var(--off-track) 5%, var(--surface));
+  border-color: color-mix(in srgb, var(--off-track) 10%, transparent);
   animation: health-breathe 2.8s ease-in-out infinite;
 }
 
 .health-tile--watch {
-  background: color-mix(in srgb, var(--watch) 14%, var(--surface));
-  border-color: color-mix(in srgb, var(--watch) 20%, transparent);
+  background: color-mix(in srgb, var(--watch) 5%, var(--surface));
+  border-color: color-mix(in srgb, var(--watch) 10%, transparent);
 }
 
 .health-tile--good {
-  background: color-mix(in srgb, var(--on-track) 12%, var(--surface));
-  border-color: color-mix(in srgb, var(--on-track) 18%, transparent);
+  background: color-mix(in srgb, var(--on-track) 4%, var(--surface));
+  border-color: color-mix(in srgb, var(--on-track) 9%, transparent);
 }
 
 @keyframes health-breathe {
   0%,
   100% {
-    background-color: color-mix(in srgb, var(--off-track) 14%, var(--surface));
+    background-color: color-mix(in srgb, var(--off-track) 4%, var(--surface));
   }
   50% {
-    background-color: color-mix(in srgb, var(--off-track) 26%, var(--surface));
+    background-color: color-mix(in srgb, var(--off-track) 8%, var(--surface));
   }
 }
 
@@ -314,16 +322,16 @@
 }
 
 .card-tile--bad {
-  background: color-mix(in srgb, var(--off-track) 10%, var(--surface));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--off-track) 18%, transparent);
+  background: color-mix(in srgb, var(--off-track) 4.5%, var(--surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--off-track) 9%, transparent);
 }
 
 .card-tile--watch {
-  background: color-mix(in srgb, var(--watch) 10%, var(--surface));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--watch) 18%, transparent);
+  background: color-mix(in srgb, var(--watch) 4.5%, var(--surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--watch) 9%, transparent);
 }
 
 .card-tile--good {
-  background: color-mix(in srgb, var(--on-track) 10%, var(--surface));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--on-track) 16%, transparent);
+  background: color-mix(in srgb, var(--on-track) 4%, var(--surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--on-track) 8%, transparent);
 }

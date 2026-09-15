@@ -119,10 +119,8 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
   return (
     <div className="grid grid-cols-2 gap-2">
       <Tile href={projectHref} className="col-span-2 bg-[var(--hero)]">
-        <p className="font-mono text-[10px] font-normal uppercase tracking-[0.08em] text-[var(--ink-2)]">
-          {p.client}
-        </p>
-        <h3 className="mt-1 text-[16px] font-normal leading-5 tracking-[-0.02em]">
+        <p className="kicker">{p.client}</p>
+        <h3 className="mt-1 text-[17px] font-normal leading-5 tracking-[-0.02em]">
           {p.name}
         </h3>
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
@@ -134,10 +132,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
 
       <Tile href={healthHref} className={healthTileClass(p.health)}>
         <p className="kicker">Health</p>
-        <div
-          className="mt-2 text-[32px] font-normal leading-none tracking-[-0.05em]"
-          style={{ color: healthInk(p.health) }}
-        >
+        <div className="figure mt-1.5" style={{ color: healthInk(p.health) }}>
           {health}
         </div>
       </Tile>
@@ -145,7 +140,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
       <Tile href={moneyHref} className="bg-[var(--surface-2)]">
         <p className="kicker">Margin</p>
         <div
-          className="mt-2 text-[22px] font-normal leading-none tracking-[-0.04em]"
+          className="figure mt-1.5"
           style={{
             color:
               p.margin < p.targetMargin
@@ -166,7 +161,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
       >
         <p className="kicker">Slip</p>
         <div
-          className="mt-2 text-[22px] font-normal leading-none tracking-[-0.04em]"
+          className="figure mt-1.5"
           style={{
             color: p.slip > 0 ? "var(--off-track-text)" : "var(--ink)",
           }}
@@ -180,9 +175,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
         className="border border-[var(--hairline)] bg-[var(--surface)]"
       >
         <p className="kicker">Contract</p>
-        <div className="mt-2 text-[22px] font-normal leading-none tracking-[-0.04em]">
-          {money(p.contract)}
-        </div>
+        <div className="figure mt-1.5">{money(p.contract)}</div>
       </Tile>
 
       <Tile
@@ -192,9 +185,7 @@ function ProjectSpread({ project: p }: { project: ProjectBento }) {
         <p className="kicker">
           {p.unbilled >= 0 ? "Earned, unbilled" : "Over-billed"}
         </p>
-        <div className="mt-2 text-[22px] font-normal leading-none tracking-[-0.04em]">
-          {unbilledAbs}
-        </div>
+        <div className="figure mt-1.5">{unbilledAbs}</div>
       </Tile>
     </div>
   );
