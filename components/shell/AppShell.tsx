@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useTransition, type ReactNode } from "react";
+import { useTransition, type ReactNode } from "react";
 import { PulseMark } from "@/components/ui/PulseMark";
 import { IconBack, IconRefresh, IconSettings, iconHit } from "@/components/ui/Icons";
 import { refreshBriefing } from "@/app/refresh/actions";
+import { signOut } from "@/app/signin/actions";
 
 const PRIMARY = [
   { href: "/", label: "Home", id: "pulse" },
@@ -16,11 +17,9 @@ const PRIMARY = [
 ] as const;
 
 const SIDE = [
-  { href: "/book", label: "Book", id: "book" },
+  { href: "/briefing", label: "Briefing", id: "briefing" },
+  { href: "/status", label: "Data", id: "status" },
   { href: "/guide", label: "Guide", id: "guide" },
-  { href: "/clients", label: "Clients", id: "clients" },
-  { href: "/decisions", label: "Decisions", id: "decisions" },
-  { href: "/sources", label: "Sources", id: "sources" },
 ] as const;
 
 export type TabId =
@@ -36,39 +35,29 @@ export function AppShell({
   active,
   title,
   backHref,
-  refreshMinutes,
+  asOf,
+  meName,
+  refreshFailed,
   children,
 }: {
   active: TabId;
   title: string;
-  asOf?: string;
   backHref?: string;
-  source?: ReactNode;
-  refreshMinutes?: number;
+  asOf?: string;
+  meName?: string;
+  refreshFailed?: boolean;
   children: ReactNode;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const pendingRef = useRef(pending);
-  pendingRef.current = pending;
-  const minutes =
-    refreshMinutes != null && refreshMinutes > 0 ? refreshMinutes : 5;
 
   function runRefresh() {
-    if (pendingRef.current) return;
     startTransition(async () => {
       await refreshBriefing();
       router.refresh();
     });
   }
-
-  useEffect(() => {
-    const id = window.setInterval(runRefresh, minutes * 60_000);
-    return () => window.clearInterval(id);
-    // Intentionally only re-arm when the interval length changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [minutes]);
 
   return (
     <div className="min-h-screen bg-[var(--canvas)] text-[var(--ink)] lg:flex">
@@ -99,10 +88,23 @@ export function AppShell({
             );
           })}
         </nav>
+        <form action={signOut} className="mt-auto p-3">
+          <button
+            type="submit"
+            className="w-full rounded-[8px] px-3 py-2 text-left text-[12px] text-[var(--ink-2)]"
+          >
+            Sign out{meName ? ` · ${meName}` : ""}
+          </button>
+        </form>
       </aside>
 
       <div className="min-w-0 flex-1 pb-24 lg:pb-0">
         <header className="sticky top-0 z-20 border-b border-[var(--hairline)] bg-[var(--material)] backdrop-blur-[18px]">
+          {refreshFailed ? (
+            <p className="bg-[color-mix(in_srgb,var(--off-track)_12%,white)] px-3 py-1.5 text-center text-[12px] text-[var(--off-track-text)]">
+              Newest load failed. Numbers are from the last successful refresh.
+            </p>
+          ) : null}
           <div className="mx-auto flex max-w-6xl items-center gap-1 px-3 py-1.5 md:px-4">
             {backHref ? (
               <Link href={backHref} className={iconHit} aria-label="Back">
@@ -126,6 +128,11 @@ export function AppShell({
             >
               {title}
             </h1>
+            {asOf && !backHref ? (
+              <p className="min-w-0 flex-1 truncate text-[12px] text-[var(--ink-2)]">
+                As of {asOf}
+              </p>
+            ) : null}
             <div className="ml-auto flex shrink-0 items-center gap-1">
               <button
                 type="button"
@@ -137,7 +144,7 @@ export function AppShell({
               >
                 <IconRefresh className={pending ? "animate-spin" : undefined} />
               </button>
-              <Link href="/book" className={iconHit} aria-label="Your book">
+              <Link href="/status" className={iconHit} aria-label="Data status">
                 <IconSettings />
               </Link>
             </div>

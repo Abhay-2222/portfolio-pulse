@@ -1,5 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "next build",
+  "buildCommand": "node --experimental-sqlite ./node_modules/next/dist/bin/next build",
   "installCommand": "npm install --legacy-peer-deps"
 }

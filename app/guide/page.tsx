@@ -1,88 +1,58 @@
 import Link from "next/link";
 import { AppShell } from "@/components/shell/AppShell";
-import { getPortfolioPayload } from "@/lib/data/get-portfolio";
+import { requireSession } from "@/lib/pmo/auth";
+import { latestAsOf, loadFailed } from "@/lib/pmo/queries";
 import { formatAsOf } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function GuidePage() {
-  const payload = await getPortfolioPayload();
-  const minutes = payload.dataset.settings.AutoRefreshMinutes || 5;
+  const me = await requireSession();
 
   return (
     <AppShell
       active="guide"
       title="Guide"
-      asOf={formatAsOf(payload.asOfDate)}
-      refreshMinutes={minutes}
+      asOf={formatAsOf(latestAsOf())}
+      meName={me.name}
+      refreshFailed={loadFailed()}
     >
       <p className="px-1 text-[13px] leading-5 text-[var(--ink-2)]">
-        Pulse reads one workbook. It never writes Excel. Best on a phone.
+        Pulse reads a PMO database. It does not write back. Health is calculated
+        in SQL, not in the screen.
       </p>
-
-      <section className="card-tile space-y-3">
+      <section className="card-tile space-y-2">
         <p className="kicker">The briefing</p>
         <ol className="list-decimal space-y-2 pl-5 text-[13px] leading-5">
           <li>
-            <strong>Home</strong>: your projects first, then the book. Tap a
-            card to open a brief.
+            Home is program folders. Counts tap through to Briefing.
           </li>
           <li>
-            Five tabs never change: Home, Projects, People, Money, Risks.
+            Five tabs: Home, Projects, People, Money, Risks. Briefing is not a
+            sixth tab.
           </li>
           <li>
-            Open a project for health, why it is that number, then Urgent
-            moves.
+            Calculated colour comes from schedule slip, cost variance, and open
+            issues. The PM&apos;s colour is compared to it.
           </li>
           <li>
-            <strong>Hold</strong> parks a finding, <strong>Take it</strong>{" "}
-            marks it yours, <strong>Done</strong> clears it. Notes stay in
-            Pulse.
+            Watermelon means reported better than the data. Never treat that as
+            a calm green.
           </li>
           <li>
-            Header Refresh re-reads now. Auto-refresh is every {minutes}{" "}
-            minutes from Settings.
+            Stale means no PM update in 30 days. Missing reported RAG is No
+            status, never Green.
           </li>
         </ol>
       </section>
-
-      <section className="card-tile space-y-3">
-        <p className="kicker">Your file</p>
-        <p className="text-[13px] leading-5 text-[var(--ink-2)]">
-          Gear or{" "}
-          <Link href="/book" className="text-[var(--accent)]">
-            Book
-          </Link>{" "}
-          is where the workbook lives.
-        </p>
-        <ol className="list-decimal space-y-2 pl-5 text-[13px] leading-5">
-          <li>
-            Start from the template if you can. Download, replace demo rows,
-            keep headers, then re-upload or paste a public Sheet link.
-          </li>
-          <li>
-            A close cousin still briefs. Pulse maps what it can. Extra sheets
-            and skinny rows go to More. Missing figures stay empty, never a
-            fake 0.
-          </li>
-          <li>
-            Google Sheets need “anyone with the link.” Private Drive: download
-            then upload.
-          </li>
-        </ol>
-      </section>
-
       <section className="card-tile space-y-2">
-        <p className="kicker">Honest limits</p>
+        <p className="kicker">Access</p>
         <p className="text-[13px] leading-5 text-[var(--ink-2)]">
-          This is a briefing, not a PMO system. No login. Cost rates stay
-          hidden. On the hosted demo, uploads do not survive a restart. Run
-          locally or link a public Sheet. The live site briefs the shipped
-          master until you add your own file.
-        </p>
-        <p className="text-[13px] leading-5 text-[var(--ink-2)]">
-          Clone and run: see the GitHub README. Replace the demo book at{" "}
-          <code className="text-[12px]">data/Enterprise_Portfolio_Data.xlsx</code>
+          You see only projects in your scope. Money is hidden when the account
+          cannot view financials. Gear opens{" "}
+          <Link href="/status" className="text-[var(--accent)]">
+            Data status
+          </Link>
           .
         </p>
       </section>

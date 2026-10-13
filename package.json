@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node --experimental-sqlite ./node_modules/next/dist/bin/next dev",
+    "build": "node --experimental-sqlite ./node_modules/next/dist/bin/next build",
+    "start": "node --experimental-sqlite ./node_modules/next/dist/bin/next start",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "vercel-build": "next build",
+    "vercel-build": "node --experimental-sqlite ./node_modules/next/dist/bin/next build",
     "fixture:cousin": "tsx scripts/generate-cousin.ts"
   },
   "dependencies": {
